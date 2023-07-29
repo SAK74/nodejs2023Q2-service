@@ -18,7 +18,6 @@ import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/services/errMessages';
 import { notFound } from 'src/services/httpExceptions/not-found';
-import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 
 @Controller('user')
 export class UsersController {
@@ -68,15 +67,8 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      if (!this.usersService.remove(id)) {
-        throw notFound;
-      }
-    } catch (err) {
-      throw new HttpException(
-        ReasonPhrases.INTERNAL_SERVER_ERROR,
-        StatusCodes.INTERNAL_SERVER_ERROR,
-      );
+    if (!this.usersService.remove(id)) {
+      throw notFound;
     }
   }
 }
