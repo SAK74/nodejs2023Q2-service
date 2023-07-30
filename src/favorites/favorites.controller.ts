@@ -47,11 +47,6 @@ export class FavoritesController {
       : 'tracks';
   }
 
-  // @Post('artist/:id')
-  // addArtist(@Param('id', ParseUUIDPipe) id: string) {
-  //   this.favoritesService.addToFavs('artists', id);
-  // }
-
   @Get()
   findAll() {
     return this.favoritesService.findAll();
@@ -64,15 +59,11 @@ export class FavoritesController {
     member: 'artist' | 'album' | 'track',
     @Param('id', ParseUUIDPipe) id: string,
   ) {
-    try {
-      this.favoritesService.removeFromFavs(this.setMember(member), id);
-    } catch (err) {
-      if ((err as Error).message === ErrMess.NOT_EXIST) {
-        throw new HttpException(
-          getReasonPhrase(HttpStatus.UNPROCESSABLE_ENTITY),
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
+    if (!this.favoritesService.removeFromFavs(this.setMember(member), id)) {
+      throw new HttpException(
+        getReasonPhrase(HttpStatus.UNPROCESSABLE_ENTITY),
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
   }
 }

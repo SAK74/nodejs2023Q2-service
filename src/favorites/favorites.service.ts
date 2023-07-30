@@ -1,20 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef, OnModuleInit } from '@nestjs/common';
 import { Favorites } from './entities/favorite.entity';
 import { ArtistsService } from 'src/artists/artists.service';
 import { AlbumsService } from 'src/albums/albums.service';
 import { TracksService } from 'src/tracks/tracks.service';
 import { FavoritesResponse } from './types';
 import { ErrMess } from 'src/services/errMessages';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
-export class FavoritesService {
-  favorites: Favorites = {
+export class FavoritesService implements OnModuleInit {
+  private favorites: Favorites = {
     artists: [],
     albums: [],
     tracks: [],
   };
+  private artistService: ArtistsService;
+
+  onModuleInit() {
+    this.artistService = this.moduleRef.get(ArtistsService, { strict: false });
+  }
   constructor(
-    private artistService: ArtistsService,
+    private moduleRef: ModuleRef,
+    @Inject(forwardRef(() => AlbumsService))
     private albService: AlbumsService,
     private tracksService: TracksService,
   ) {}
@@ -47,23 +54,16 @@ export class FavoritesService {
       albums: this.favorites.albums.map((id) => this.albService.findOne(id)),
       tracks: this.favorites.tracks.map((id) => this.tracksService.findOne(id)),
     };
-    // return this.favorites;
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} favorite`;
-  // }
-
-  // update(id: number, updateFavoriteDto: UpdateFavoriteDto) {
-  //   return `This action updates a #${id} favorite`;
-  // }
-
   removeFromFavs(memberType: keyof Favorites, id: string) {
+    console.log('delete before: ', this.favorites[memberType], id);
     if (!this.checkIncludes(memberType, id)) {
-      throw Error(ErrMess.NOT_EXIST);
+      return false;
     }
     const favIdx = this.favorites[memberType].findIndex((_id) => _id === id);
     this.favorites[memberType].splice(favIdx, 1);
-    console.log('del favorites: ', this.favorites);
+    console.log('del favorites: ', this.favorites[memberType]);
+    return true;
   }
 }

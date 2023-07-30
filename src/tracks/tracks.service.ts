@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { Track } from './entities/track.entity';
 import { randomUUID } from 'crypto';
 import { ErrMess } from 'src/services/errMessages';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class TracksService {
-  tracks: Track[] = [];
+  private tracks: Track[] = [];
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    private favService: FavoritesService,
+  ) {}
   create(createTrackDto: CreateTrackDto) {
     const _track: Track = { ...createTrackDto, id: randomUUID() };
     this.tracks.push(_track);
@@ -32,6 +37,7 @@ export class TracksService {
 
   remove(_id: string) {
     if (this.tracks.some(({ id }) => id === _id)) {
+      this.favService.removeFromFavs('tracks', _id);
       this.tracks = [...this.tracks.filter(({ id }) => id !== _id)];
       return true;
     }

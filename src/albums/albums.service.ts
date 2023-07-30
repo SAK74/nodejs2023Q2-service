@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './entities/album.entity';
 import { randomUUID } from 'crypto';
 import { ErrMess } from 'src/services/errMessages';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Injectable()
 export class AlbumsService {
-  albums: Album[] = [];
+  private albums: Album[] = [];
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    private favsService: FavoritesService,
+  ) {}
   create(createAlbumDto: CreateAlbumDto) {
     const _album: Album = { ...createAlbumDto, id: randomUUID() };
     this.albums.push(_album);
@@ -32,6 +37,7 @@ export class AlbumsService {
 
   remove(_id: string) {
     if (this.albums.some(({ id }) => id === _id)) {
+      this.favsService.removeFromFavs('albums', _id);
       this.albums = [...this.albums.filter(({ id }) => id !== _id)];
       return true;
     }

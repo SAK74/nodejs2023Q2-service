@@ -9,7 +9,6 @@ import {
 @Injectable()
 export class FavsTypeValidatePipe implements PipeTransform {
   transform(val: any, meta: ArgumentMetadata) {
-    console.log('pipe transform: ', meta);
     if (val !== 'artist' && val !== 'album' && val !== 'track') {
       throw new HttpException(`Route ${val} not exist!`, HttpStatus.NOT_FOUND);
     }
