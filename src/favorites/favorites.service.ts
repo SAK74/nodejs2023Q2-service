@@ -46,7 +46,6 @@ export class FavoritesService implements OnModuleInit {
   }
 
   findAll(): FavoritesResponse {
-    console.log('favorites: ', this.favorites);
     return {
       artists: this.favorites.artists.map((id) =>
         this.artistService.findOne(id),
@@ -57,13 +56,11 @@ export class FavoritesService implements OnModuleInit {
   }
 
   removeFromFavs(memberType: keyof Favorites, id: string) {
-    console.log('delete before: ', this.favorites[memberType], id);
     if (!this.checkIncludes(memberType, id)) {
       return false;
     }
     const favIdx = this.favorites[memberType].findIndex((_id) => _id === id);
     this.favorites[memberType].splice(favIdx, 1);
-    console.log('del favorites: ', this.favorites[memberType]);
     return true;
   }
 }

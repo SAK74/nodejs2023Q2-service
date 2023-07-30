@@ -4,6 +4,8 @@ import { Artist } from './entities/artist.entity';
 import { randomUUID } from 'crypto';
 import { ErrMess } from 'src/services/errMessages';
 import { FavoritesService } from 'src/favorites/favorites.service';
+import { AlbumsService } from 'src/albums/albums.service';
+import { TracksService } from 'src/tracks/tracks.service';
 
 @Injectable()
 export class ArtistsService {
@@ -11,6 +13,8 @@ export class ArtistsService {
   constructor(
     @Inject(forwardRef(() => FavoritesService))
     private favService: FavoritesService,
+    private albService: AlbumsService,
+    private trackService: TracksService,
   ) {}
   create(createArtistDto: CreateArtistDto) {
     const _artist: Artist = { ...createArtistDto, id: randomUUID() };
@@ -38,6 +42,8 @@ export class ArtistsService {
   remove(_id: string) {
     if (this.artists.some(({ id }) => id === _id)) {
       this.favService.removeFromFavs('artists', _id);
+      this.albService.removeArtistIdFromAlbums(_id);
+      this.trackService.removeArtistIdFromTracks(_id);
       this.artists = [...this.artists.filter(({ id }) => id !== _id)];
       return true;
     }

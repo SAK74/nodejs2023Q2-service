@@ -43,4 +43,26 @@ export class TracksService {
     }
     return false;
   }
+
+  removeArtistIdFromTracks(_artistId: string) {
+    this.tracks = [
+      ...this.tracks.map((track) => {
+        if (_artistId === track.artistId) {
+          track.artistId = null;
+        }
+        return track;
+      }),
+    ];
+  }
+
+  removeAlbumFromTracks(_albumId: string) {
+    this.tracks = [
+      ...this.tracks.map((track) => {
+        if (_albumId === track.albumId) {
+          track.albumId = null;
+        }
+        return track;
+      }),
+    ];
+  }
 }
