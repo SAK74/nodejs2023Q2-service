@@ -5,7 +5,7 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { ServerResponse } from 'http';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class SetHeaderInterceptor implements NestInterceptor {
@@ -14,6 +14,6 @@ export class SetHeaderInterceptor implements NestInterceptor {
     // req.headers['content-type'] = 'application/json';
     const resp = ctx.switchToHttp().getResponse<ServerResponse>();
     resp.setHeader('content-type', 'application/json');
-    return next.handle().pipe(tap((next) => {}));
+    return next.handle();
   }
 }
