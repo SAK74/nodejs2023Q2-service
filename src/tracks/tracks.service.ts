@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/track.entity';
+import { randomUUID } from 'crypto';
+import { ErrMess } from 'src/services/errMessages';
 
 @Injectable()
 export class TracksService {
+  tracks: Track[] = [];
   create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+    const _track: Track = { ...createTrackDto, id: randomUUID() };
+    this.tracks.push(_track);
+    return _track;
   }
 
   findAll() {
-    return `This action returns all tracks`;
+    return this.tracks;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  findOne(_id: string) {
+    return this.tracks.find(({ id }) => id === _id);
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  update(_id: string, data: CreateTrackDto) {
+    let trackIdx: number;
+    if ((trackIdx = this.tracks.findIndex(({ id }) => id === _id)) !== -1) {
+      this.tracks[trackIdx] = { ...this.tracks[trackIdx], ...data };
+      return this.tracks[trackIdx];
+    }
+    throw new Error(ErrMess.NOT_EXIST);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  remove(_id: string) {
+    if (this.tracks.some(({ id }) => id === _id)) {
+      this.tracks = [...this.tracks.filter(({ id }) => id !== _id)];
+      return true;
+    }
+    return false;
   }
 }

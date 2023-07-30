@@ -1,10 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { Track } from '../entities/track.entity';
+import { Album } from '../entities/album.entity';
 import { IsDefined, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateTrackDto extends PartialType(Track) {
+export class CreateAlbumDto extends PartialType(Album) {
   @IsDefined() @IsString() name: string;
+  @IsDefined() @IsNumber() year: number;
   @IsOptional() @IsString() artistId: string | null;
-  @IsOptional() @IsString() albumId: string | null;
-  @IsDefined() @IsNumber() duration: number;
 }

@@ -1,9 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  // Patch,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Put,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { UpdateTrackDto } from './dto/update-track.dto';
+import { Track } from './entities/track.entity';
+import { notFound } from 'src/services/httpExceptions/not-found';
+import { ErrMess } from 'src/services/errMessages';
 
-@Controller('tracks')
+@Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
 
@@ -18,17 +32,35 @@ export class TracksController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tracksService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    let _artist: Track | undefined;
+    if ((_artist = this.tracksService.findOne(id))) {
+      return _artist;
+    }
+    throw notFound;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    return this.tracksService.update(+id, updateTrackDto);
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
+  //   return this.tracksService.update(+id, updateTrackDto);
+  // }
+
+  @Put(':id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: CreateTrackDto) {
+    try {
+      return this.tracksService.update(id, data);
+    } catch (err) {
+      if ((err as Error).message === ErrMess.NOT_EXIST) {
+        throw notFound;
+      }
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tracksService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    if (!this.tracksService.remove(id)) {
+      throw notFound;
+    }
   }
 }

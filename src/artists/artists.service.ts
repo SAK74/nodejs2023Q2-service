@@ -18,6 +18,7 @@ export class ArtistsService {
   }
 
   findOne(_id: string) {
+    // console.log('artists: ', this.artists);
     return this.artists.find(({ id }) => id === _id);
   }
 
