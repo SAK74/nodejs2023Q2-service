@@ -20,7 +20,12 @@ export class UsersService {
       updatedAt: Date.now(),
     };
     this.users.push(_user);
-    const res = { ..._user };
+
+    return this.hidePassw(_user);
+  }
+
+  private hidePassw(user: User): Omit<User, 'password'> {
+    const res = { ...user };
     delete res.password;
     return res;
   }
@@ -28,19 +33,18 @@ export class UsersService {
   findAll() {
     return [
       ...this.users.map((user) => {
-        delete user.password;
-        return user;
+        return this.hidePassw(user);
       }),
     ];
   }
 
   findOne(_id: string) {
-    return this.users.find(({ id }) => id === _id);
+    let _user: User | undefined;
+    if ((_user = this.users.find(({ id }) => id === _id))) {
+      return this.hidePassw(_user);
+    }
+    return null;
   }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
 
   paswChange(_id: string, { oldPassword, newPassword }: UpdatePasswordDto) {
     let _user: User | undefined;

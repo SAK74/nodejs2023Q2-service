@@ -35,7 +35,7 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    let _user: User | undefined;
+    let _user: Omit<User, 'password'> | undefined;
     if ((_user = this.usersService.findOne(id))) {
       return _user;
     }
