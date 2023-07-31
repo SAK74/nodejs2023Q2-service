@@ -282,8 +282,7 @@ info:
   version: 1.0.0
   contact: {}
 tags: []
-servers:
-  - url: /api
+servers: []
 components:
   schemas:
     CreateUserDto:
