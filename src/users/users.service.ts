@@ -4,24 +4,28 @@ import { User } from './entities/user.entity';
 import { randomUUID } from 'crypto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/services/errMessages';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
   users: User[];
-  constructor() {
+  constructor(private prisma: PrismaService) {
     this.users = [];
   }
-  create(createUserDto: CreateUserDto) {
-    const _user: User = {
-      ...createUserDto,
-      id: randomUUID(),
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-    this.users.push(_user);
+  async create(createUserDto: CreateUserDto) {
+    // const _user: User = {
+    //   ...createUserDto,
+    //   id: randomUUID(),
+    //   version: 1,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // };
+    // this.users.push(_user);
 
-    return this.hidePassw(_user);
+    // return this.hidePassw(_user);
+    return this.hidePassw(
+      await this.prisma.user.create({ data: { ...createUserDto, version: 1 } }),
+    );
   }
 
   private hidePassw(user: User): Omit<User, 'password'> {
@@ -30,12 +34,15 @@ export class UsersService {
     return res;
   }
 
-  findAll() {
-    return [
-      ...this.users.map((user) => {
-        return this.hidePassw(user);
-      }),
-    ];
+  async findAll() {
+    // return [
+    //   ...this.users.map((user) => {
+    //     return this.hidePassw(user);
+    //   }),
+    // ];
+    return (await this.prisma.user.findMany()).map((user) =>
+      this.hidePassw(user),
+    );
   }
 
   findOne(_id: string) {
@@ -55,7 +62,7 @@ export class UsersService {
           ...this.users[userIdx],
           password: newPassword,
           version: _user.version + 1,
-          updatedAt: Date.now(),
+          updatedAt: new Date(),
         };
         const res = { ...this.users[userIdx] };
         delete res.password;

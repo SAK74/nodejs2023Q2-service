@@ -31,7 +31,9 @@ async function bootstrap() {
   console.log('\x1b[95mDocs have building in /docs path\x1b[0m');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new SetHeaderInterceptor());
-  await app.listen(PORT);
+  await app.listen(PORT, () => {
+    console.log(`\x1b[96mServer started in PORT ${PORT}\x1b[0m`);
+  });
 }
 bootstrap();
 const writeDocAPI = (document: string) => {

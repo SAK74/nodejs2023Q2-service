@@ -1,0 +1,10 @@
+test
+.git
+node_modules
+dist
+Dockerfile
+.dockerignore
+.gitignore
+.eslintrc.js
+.prettierrc
+*.md
