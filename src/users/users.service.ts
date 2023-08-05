@@ -4,12 +4,13 @@ import { User } from './entities/user.entity';
 import { randomUUID } from 'crypto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/services/errMessages';
-import { PrismaService } from 'src/prisma/prisma.service';
+// import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
   users: User[];
-  constructor(private prisma: PrismaService) {
+  constructor() // private prisma: PrismaService
+  {
     this.users = [];
   }
   async create(createUserDto: CreateUserDto) {
@@ -21,11 +22,10 @@ export class UsersService {
     //   updatedAt: new Date(),
     // };
     // this.users.push(_user);
-
     // return this.hidePassw(_user);
-    return this.hidePassw(
-      await this.prisma.user.create({ data: { ...createUserDto, version: 1 } }),
-    );
+    // return this.hidePassw(
+    //   await this.prisma.user.create({ data: { ...createUserDto, version: 1 } }),
+    // );
   }
 
   private hidePassw(user: User): Omit<User, 'password'> {
@@ -40,9 +40,9 @@ export class UsersService {
     //     return this.hidePassw(user);
     //   }),
     // ];
-    return (await this.prisma.user.findMany()).map((user) =>
-      this.hidePassw(user),
-    );
+    // return (await this.prisma.user.findMany()).map((user) =>
+    //   this.hidePassw(user),
+    // );
   }
 
   findOne(_id: string) {

@@ -3,14 +3,29 @@ version: '3.8'
 services:
   postgres:
     container_name: pg-container
-    image: postgres:15
+    # image: postgres:15
+    build: ./db
     restart: always
-    environment:
-        - POSTGRES_USER=${POSTGRES_USER}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSW}
+    # environment:
+    #     - POSTGRES_USER=${POSTGRES_USER}
+    #     - POSTGRES_PASSWORD=${POSTGRES_PASSW}
     volumes:
         - postgres:/var/lib/postgresql/data
     ports:
         - ${POSTGRES_PORT}:5432
+    # networks:
+    #   - myNet
+
+  # app:
+  #   build: ./
+  #   depends_on:
+  #     - pg-container
+  #   networks:
+  #     - myNet
+
 volumes:
   postgres:
+
+# networks:
+#   myNet:
+#     driver: bridge
