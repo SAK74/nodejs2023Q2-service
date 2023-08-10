@@ -3,19 +3,17 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   ParseUUIDPipe,
   Put,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { Artist } from './entities/artist.entity';
-import { notFound } from 'src/services/httpExceptions/not-found';
-import { ErrMess } from 'src/services/errMessages';
+import { Prisma } from '@prisma/client';
 
 @Controller('artist')
 export class ArtistsController {
@@ -32,38 +30,38 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    let _artist: Artist | undefined;
-    if ((_artist = this.artistsService.findOne(id))) {
-      return _artist;
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      return await this.artistsService.findOne(id);
+    } catch (err) {
+      console.log(err);
+      if (err instanceof Prisma.NotFoundError) {
+        throw new NotFoundException(err.message);
+      }
     }
-    throw notFound;
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-  //   return this.artistsService.update(+id, updateArtistDto);
-  // }
-
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: CreateArtistDto,
   ) {
     try {
-      return this.artistsService.update(id, data);
+      return await this.artistsService.update(id, data);
     } catch (err) {
-      if ((err as Error).message === ErrMess.NOT_EXIST) {
-        throw notFound;
-      }
+      console.log(err);
+      throw new NotFoundException(err.meta?.cause);
     }
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    if (!this.artistsService.remove(id)) {
-      throw notFound;
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      await this.artistsService.remove(id);
+    } catch (err) {
+      console.log(err);
+      throw new NotFoundException(err.meta?.cause);
     }
   }
 }

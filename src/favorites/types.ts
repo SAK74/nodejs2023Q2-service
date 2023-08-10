@@ -3,7 +3,7 @@ import { Album } from 'src/albums/entities/album.entity';
 import { Track } from 'src/tracks/entities/track.entity';
 
 export interface FavoritesResponse {
-  artists: Artist[];
-  albums: Album[];
-  tracks: Track[];
+  // artists: Artist[];
+  // albums: Album[];
+  // tracks: Track[];
 }

@@ -1,47 +1,36 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { Track } from './entities/track.entity';
-import { randomUUID } from 'crypto';
-import { ErrMess } from 'src/services/errMessages';
-import { FavoritesService } from 'src/favorites/favorites.service';
+// import { FavoritesService } from 'src/favorites/favorites.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TracksService {
   private tracks: Track[] = [];
   constructor(
-    @Inject(forwardRef(() => FavoritesService))
-    private favService: FavoritesService,
+    // @Inject(forwardRef(() => FavoritesService))
+    // private favService: FavoritesService,
+    private prisma: PrismaService,
   ) {}
   create(createTrackDto: CreateTrackDto) {
-    const _track: Track = { ...createTrackDto, id: randomUUID() };
-    this.tracks.push(_track);
-    return _track;
+    return this.prisma.track.create({ data: createTrackDto });
   }
 
   findAll() {
-    return this.tracks;
+    return this.prisma.track.findMany();
   }
 
   findOne(_id: string) {
-    return this.tracks.find(({ id }) => id === _id);
+    return this.prisma.track.findUniqueOrThrow({ where: { id: _id } });
   }
 
   update(_id: string, data: CreateTrackDto) {
-    let trackIdx: number;
-    if ((trackIdx = this.tracks.findIndex(({ id }) => id === _id)) !== -1) {
-      this.tracks[trackIdx] = { ...this.tracks[trackIdx], ...data };
-      return this.tracks[trackIdx];
-    }
-    throw new Error(ErrMess.NOT_EXIST);
+    return this.prisma.track.update({ where: { id: _id }, data });
   }
 
   remove(_id: string) {
-    if (this.tracks.some(({ id }) => id === _id)) {
-      this.favService.removeFromFavs('tracks', _id);
-      this.tracks = [...this.tracks.filter(({ id }) => id !== _id)];
-      return true;
-    }
-    return false;
+    //   this.favService.removeFromFavs('tracks', _id);
+    return this.prisma.track.delete({ where: { id: _id } });
   }
 
   removeArtistIdFromTracks(_artistId: string) {

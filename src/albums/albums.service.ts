@@ -1,50 +1,49 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './entities/album.entity';
-import { randomUUID } from 'crypto';
-import { ErrMess } from 'src/services/errMessages';
-import { FavoritesService } from 'src/favorites/favorites.service';
-import { TracksService } from 'src/tracks/tracks.service';
+// import { randomUUID } from 'crypto';
+// import { ErrMess } from 'src/services/errMessages';
+// import { FavoritesService } from 'src/favorites/favorites.service';
+// import { TracksService } from 'src/tracks/tracks.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumsService {
   private albums: Album[] = [];
   constructor(
-    @Inject(forwardRef(() => FavoritesService))
-    private favsService: FavoritesService,
-    private trackServ: TracksService,
+    // @Inject(forwardRef(() => FavoritesService))
+    // private favsService: FavoritesService,
+    // private trackServ: TracksService,
+    private prisma: PrismaService,
   ) {}
-  create(createAlbumDto: CreateAlbumDto) {
-    const _album: Album = { ...createAlbumDto, id: randomUUID() };
-    this.albums.push(_album);
-    return _album;
+  create(data: CreateAlbumDto) {
+    return this.prisma.album.create({ data });
   }
 
   findAll() {
-    return this.albums;
+    return this.prisma.album.findMany();
   }
 
   findOne(_id: string) {
-    return this.albums.find(({ id }) => id === _id);
+    return this.prisma.album.findUniqueOrThrow({ where: { id: _id } });
   }
 
   update(_id: string, data: CreateAlbumDto) {
-    let albumIdx: number;
-    if ((albumIdx = this.albums.findIndex(({ id }) => id === _id)) !== -1) {
-      this.albums[albumIdx] = { ...this.albums[albumIdx], ...data };
-      return this.albums[albumIdx];
-    }
-    throw new Error(ErrMess.NOT_EXIST);
+    return this.prisma.album.update({ where: { id: _id }, data });
   }
 
   remove(_id: string) {
-    if (this.albums.some(({ id }) => id === _id)) {
-      this.favsService.removeFromFavs('albums', _id);
-      this.trackServ.removeAlbumFromTracks(_id);
-      this.albums = [...this.albums.filter(({ id }) => id !== _id)];
-      return true;
-    }
-    return false;
+    // if (this.albums.some(({ id }) => id === _id)) {
+    //   this.favsService.removeFromFavs('albums', _id);
+    //   this.trackServ.removeAlbumFromTracks(_id);
+    //   this.albums = [...this.albums.filter(({ id }) => id !== _id)];
+    //   return true;
+    // }
+    // return false;
+
+    //   this.favsService.removeFromFavs('albums', _id);
+    //   this.trackServ.removeAlbumFromTracks(_id);
+    return this.prisma.album.delete({ where: { id: _id } });
   }
 
   removeArtistIdFromAlbums(_artistId: string) {

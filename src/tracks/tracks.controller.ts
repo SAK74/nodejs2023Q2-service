@@ -3,19 +3,17 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   ParseUUIDPipe,
   Put,
   HttpCode,
   HttpStatus,
+  NotFoundException,
 } from '@nestjs/common';
 import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
-import { Track } from './entities/track.entity';
-import { notFound } from 'src/services/httpExceptions/not-found';
-import { ErrMess } from 'src/services/errMessages';
+import { Prisma } from '@prisma/client';
 
 @Controller('track')
 export class TracksController {
@@ -32,35 +30,38 @@ export class TracksController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    let _artist: Track | undefined;
-    if ((_artist = this.tracksService.findOne(id))) {
-      return _artist;
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      return await this.tracksService.findOne(id);
+    } catch (err) {
+      console.log(err);
+      if (err instanceof Prisma.NotFoundError) {
+        throw new NotFoundException(err.message);
+      }
     }
-    throw notFound;
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-  //   return this.tracksService.update(+id, updateTrackDto);
-  // }
-
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() data: CreateTrackDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() data: CreateTrackDto,
+  ) {
     try {
-      return this.tracksService.update(id, data);
+      return await this.tracksService.update(id, data);
     } catch (err) {
-      if ((err as Error).message === ErrMess.NOT_EXIST) {
-        throw notFound;
-      }
+      console.log(err);
+      throw new NotFoundException(err.meta?.cause);
     }
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    if (!this.tracksService.remove(id)) {
-      throw notFound;
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      await this.tracksService.remove(id);
+    } catch (err) {
+      console.log(err);
+      throw new NotFoundException(err.meta?.cause);
     }
   }
 }

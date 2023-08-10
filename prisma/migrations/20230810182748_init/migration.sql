@@ -33,6 +33,7 @@ CREATE TABLE "Album" (
 CREATE TABLE "Track" (
     "id" UUID NOT NULL,
     "name" VARCHAR NOT NULL,
+    "duration" INTEGER NOT NULL,
     "artistId" UUID,
     "albumId" UUID,
 
