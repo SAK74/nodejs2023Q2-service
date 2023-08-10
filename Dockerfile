@@ -2,14 +2,15 @@ FROM node:18
 WORKDIR /app
 COPY package*.json ./
 COPY tsconfig*.json ./
-RUN npm i
-COPY  . .
-ENV PORT={PORT}
-# ENV PORT=4000
-RUN npm run build
-# RUN command
+COPY prisma ./prisma
 
-# FROM node:18 AS production
-# COPY --from=development ./dist ./dist
-EXPOSE 4000
-CMD [ "node","dist/main" ]
+# setup for bad connection to avoid timeout!
+RUN npm config set fetch-retries 5
+RUN npm config set fetch-retry-mintimeout 20000
+RUN npm config set fetch-retry-maxtimeout 120000
+
+RUN npm ci
+COPY . .
+RUN npx prisma generate
+
+EXPOSE ${PORT}

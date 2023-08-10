@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -11,10 +12,54 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  login     String
-  password  String
+  id        String   @id @default(uuid()) @db.Uuid
+  login     String   @db.VarChar()
+  password  String   @db.VarChar()
   version   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Artist {
+  id     String  @id @default(uuid()) @db.Uuid
+  name   String  @db.VarChar()
+  grammy Boolean
+  Album  Album[]
+  Track  Track[]
+}
+
+model Album {
+  id       String  @id @default(uuid()) @db.Uuid
+  name     String  @db.VarChar()
+  year     Int
+  artistId String? @db.Uuid
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  Track    Track[]
+}
+
+model Track {
+  id       String  @id @default(uuid()) @db.Uuid
+  name     String  @db.VarChar()
+  artistId String? @db.Uuid
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  albumId  String? @db.Uuid
+  album    Album?  @relation(fields: [albumId], references: [id])
+}
+
+model FavArtist {
+  artistId String @unique @db.Uuid
+
+  @@id([artistId])
+}
+
+model FavsAlbum {
+  albumId String @unique @db.Uuid
+
+  @@id([albumId])
+}
+
+model FavTrack {
+  trackId String @unique @db.Uuid
+
+  @@id([trackId])
 }

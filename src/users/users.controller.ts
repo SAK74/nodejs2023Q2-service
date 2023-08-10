@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
   Param,
   Delete,
   Put,
@@ -11,64 +10,81 @@ import {
   HttpException,
   HttpStatus,
   HttpCode,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/services/errMessages';
-import { notFound } from 'src/services/httpExceptions/not-found';
+import { Prisma } from '@prisma/client';
 
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.hidePassw(await this.usersService.create(createUserDto));
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return (await this.usersService.findAll()).map((user) =>
+      this.hidePassw(user),
+    );
+  }
+
+  private hidePassw(user: User) {
+    const res = {
+      ...user,
+      createdAt: new Date(user.createdAt).getTime(),
+      updatedAt: new Date(user.updatedAt).getTime(),
+    };
+    delete res.password;
+    return res;
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    let _user: Omit<User, 'password'> | undefined;
-    if ((_user = this.usersService.findOne(id))) {
-      return _user;
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      return this.hidePassw(await this.usersService.findOne(id));
+    } catch (err) {
+      console.log(err.message);
+      if (err instanceof Prisma.NotFoundError) {
+        throw new NotFoundException(err.message);
+      }
     }
-    throw notFound;
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
   @Put(':id')
-  passwChange(
+  async passwChange(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() passwUpdate: UpdatePasswordDto,
   ) {
     try {
-      return this.usersService.paswChange(id, passwUpdate);
+      return this.hidePassw(
+        await this.usersService.paswChange(id, passwUpdate),
+      );
     } catch (err) {
-      if ((err as Error).message === ErrMess.NOT_EXIST) {
-        throw notFound;
-      }
+      console.log(err);
       if ((err as Error).message === ErrMess.WRONG_PASSW) {
         throw new HttpException('Wrong password!', HttpStatus.FORBIDDEN);
+      }
+      if (err instanceof Prisma.NotFoundError) {
+        throw new NotFoundException(err.message);
       }
     }
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    if (!this.usersService.remove(id)) {
-      throw notFound;
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    try {
+      await this.usersService.remove(id);
+    } catch (err) {
+      console.log(err);
+      throw new NotFoundException(err.meta?.cause);
     }
   }
 }

@@ -9,7 +9,7 @@ import { resolve } from 'path';
 import { parse, stringify } from 'yaml';
 
 const PORT = process.env.PORT;
-const apiFileURL = resolve(__dirname, '../doc/open-api.yaml');
+const apiFileURL = resolve('./doc/open-api.yaml');
 
 const config = new DocumentBuilder()
   .setTitle('Home Library Service')
