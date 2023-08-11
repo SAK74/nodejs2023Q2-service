@@ -14,6 +14,7 @@ import {
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Prisma } from '@prisma/client';
+import { FavoritesService } from 'src/favorites/favorites.service';
 
 @Controller('album')
 export class AlbumsController {

@@ -5,8 +5,7 @@ services:
   #   container_name: app-container
   #   build: ./
   #   command: npm run start:migrate
-  #   restart: always
-  #   # unless-stopped
+  #   restart: unless-stopped
   #   environment:
   #     - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSW}@postgres:${PG_PORT}/${POSTGRES_DB}?schema=public
   #   volumes:
@@ -21,7 +20,7 @@ services:
   postgres:
     container_name: pg-container
     build: ./db
-    restart: always
+    restart: unless-stopped
     environment:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSW}

@@ -1,66 +1,49 @@
-import { Inject, Injectable, forwardRef, OnModuleInit } from '@nestjs/common';
-import { Favorites } from './entities/favorite.entity';
-import { ArtistsService } from 'src/artists/artists.service';
-import { AlbumsService } from 'src/albums/albums.service';
-import { TracksService } from 'src/tracks/tracks.service';
+import { Injectable } from '@nestjs/common';
 import { FavoritesResponse } from './types';
-import { ErrMess } from 'src/services/errMessages';
-import { ModuleRef } from '@nestjs/core';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { Member } from './favorites.controller';
 
 @Injectable()
-export class FavoritesService implements OnModuleInit {
-  private favorites: Favorites = {
-    artists: [],
-    albums: [],
-    tracks: [],
-  };
-  private artistService: ArtistsService;
-
-  onModuleInit() {
-    this.artistService = this.moduleRef.get(ArtistsService, { strict: false });
-  }
-  constructor(
-    private moduleRef: ModuleRef,
-    @Inject(forwardRef(() => AlbumsService))
-    private albService: AlbumsService,
-    private tracksService: TracksService,
-  ) {}
-  addToFavs(memberType: keyof Favorites, id: string) {
-    // if (!this.checkIncludes(memberType, id)) {
-    //   throw Error(ErrMess.NOT_EXIST);
-    // }
-    // this.favorites[memberType].push(id);
-  }
-
-  private checkIncludes(member: keyof Favorites, _id: string) {
-    switch (member) {
-      case 'albums':
-      // return this.albService.findAll().some(({ id }) => id === _id);
-      case 'artists':
-      // return this.artistService.findAll().some(({ id }) => id === _id);
-      case 'tracks':
-      // return this.tracksService.findAll().some(({ id }) => id === _id);
-      default:
-        throw Error('Unknow error!');
+export class FavoritesService {
+  constructor(private prisma: PrismaService) {}
+  async addToFavs(memberType: Member, id: string) {
+    try {
+      switch (memberType) {
+        case 'album':
+          return await this.prisma.favAlbum.create({ data: { albumId: id } });
+        case 'artist':
+          return await this.prisma.favArtist.create({ data: { artistId: id } });
+        case 'track':
+          return await this.prisma.favTrack.create({ data: { trackId: id } });
+      }
+    } catch (err) {
+      console.log('err in  favorites service: ', err);
+      return false;
     }
   }
 
-  findAll(): FavoritesResponse {
+  async findAll(): Promise<FavoritesResponse> {
     return {
-      artists: this.favorites.artists.map((id) =>
-        this.artistService.findOne(id),
-      ),
-      // albums: this.favorites.albums.map((id) => this.albService.findOne(id)),
-      // tracks: this.favorites.tracks.map((id) => this.tracksService.findOne(id)),
+      artists: (
+        await this.prisma.favArtist.findMany({ include: { artist: true } })
+      ).map((favs) => favs.artist),
+      albums: (
+        await this.prisma.favAlbum.findMany({ include: { album: true } })
+      ).map((favs) => favs.album),
+      tracks: (
+        await this.prisma.favTrack.findMany({ include: { track: true } })
+      ).map((favs) => favs.track),
     };
   }
 
-  removeFromFavs(memberType: keyof Favorites, id: string) {
-    // if (!this.checkIncludes(memberType, id)) {
-    //   return false;
-    // }
-    const favIdx = this.favorites[memberType].findIndex((_id) => _id === id);
-    this.favorites[memberType].splice(favIdx, 1);
-    return true;
+  removeFromFavs(memberType: Member, id: string) {
+    switch (memberType) {
+      case 'album':
+        return this.prisma.favAlbum.delete({ where: { albumId: id } });
+      case 'artist':
+        return this.prisma.favArtist.delete({ where: { artistId: id } });
+      case 'track':
+        return this.prisma.favTrack.delete({ where: { trackId: id } });
+    }
   }
 }

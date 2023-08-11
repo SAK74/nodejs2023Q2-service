@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './entities/album.entity';
-// import { randomUUID } from 'crypto';
-// import { ErrMess } from 'src/services/errMessages';
-// import { FavoritesService } from 'src/favorites/favorites.service';
-// import { TracksService } from 'src/tracks/tracks.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumsService {
   private albums: Album[] = [];
-  constructor(
-    // @Inject(forwardRef(() => FavoritesService))
-    // private favsService: FavoritesService,
-    // private trackServ: TracksService,
-    private prisma: PrismaService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
   create(data: CreateAlbumDto) {
     return this.prisma.album.create({ data });
   }
@@ -33,16 +24,6 @@ export class AlbumsService {
   }
 
   remove(_id: string) {
-    // if (this.albums.some(({ id }) => id === _id)) {
-    //   this.favsService.removeFromFavs('albums', _id);
-    //   this.trackServ.removeAlbumFromTracks(_id);
-    //   this.albums = [...this.albums.filter(({ id }) => id !== _id)];
-    //   return true;
-    // }
-    // return false;
-
-    //   this.favsService.removeFromFavs('albums', _id);
-    //   this.trackServ.removeAlbumFromTracks(_id);
     return this.prisma.album.delete({ where: { id: _id } });
   }
 
