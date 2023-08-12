@@ -2,7 +2,9 @@
 
 ## Description
 
-### Create a _REST_ Home Library Service with NestJS.
+- ### Create a _REST_ Home Library Service with NestJS.
+- ### Create database in Postgresql with ORM Prisma acces.
+- ### Dockerization DB and app.
 
 <br/>
 
@@ -10,6 +12,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install Docker Engene (**Docker Desctop** recommended!)](https://docs.docker.com/engine/install/)
 
 ## Downloading
 
@@ -17,7 +20,7 @@
 git clone https://github.com/SAK74/nodejs2023Q2-service.git
 ```
 
-## Installing NPM modules
+## Installing NPM modules (_is required to testing use only_)
 
 ```
 npm install
@@ -26,11 +29,15 @@ npm install
 ## Prepare
 
 - create `.env` file in root directory with specifuing PORT (_you can use `.env.example` as example_)
+- add neccessary variables to `.env` (like as `.env.example`)
+- :exclamation: run **`Docker Desctop`**
 
-## Running application
+## Running application in Docker container
+
+In **current dirrectory** run
 
 ```
-npm start
+docker compose up
 ```
 
 After starting the app on port (4000 as default) you can open
