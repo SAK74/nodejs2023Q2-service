@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { FavoritesController } from './favorites.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
@@ -7,6 +7,5 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [PrismaModule],
   controllers: [FavoritesController],
   providers: [FavoritesService],
-  exports: [FavoritesService],
 })
 export class FavoritesModule {}
