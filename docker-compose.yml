@@ -1,21 +1,21 @@
 version: '3.8'
 
 services:
-  # app:
-  #   container_name: app-container
-  #   build: ./
-  #   command: npm run start:migrate
-  #   restart: unless-stopped
-  #   environment:
-  #     - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSW}@postgres:${PG_PORT}/${POSTGRES_DB}?schema=public&pool_timeout=${POOL_TIMEOUT}
-  #   volumes:
-  #     - ./src:/app/src
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - myNet
-  #   ports:
-  #     - ${PORT}:${PORT}
+  app:
+    container_name: app-container
+    build: ./
+    command: npm run start:migrate
+    restart: unless-stopped
+    environment:
+      - PG_HOST=postgres
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - postgres
+    networks:
+      - myNet
+    ports:
+      - ${PORT}:${PORT}
 
   postgres:
     container_name: pg-container
