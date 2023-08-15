@@ -26,6 +26,7 @@ export class AlbumsController {
 
   @Get()
   findAll() {
+    // new Promise((resolve) => resolve(5)).then((res) => console.log(res));
     return this.albumsService.findAll();
   }
 

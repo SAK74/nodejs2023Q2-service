@@ -43,15 +43,20 @@ async function bootstrap() {
   app.useGlobalInterceptors(new SetHeaderInterceptor());
 
   // app.use(requestLogger);
-  app.useLogger(app.get(CustomLogger));
+  app.useLogger(new CustomLogger());
 
   await app.listen(PORT, () => {
     console.log(`\x1b[96mServer started in PORT ${PORT}\x1b[0m`);
   });
 }
 bootstrap();
+
 const writeDocAPI = (document: string) => {
   writeFile(apiFileURL, document, { encoding: 'utf8' }, () => {
     console.log(`\x1b[95mAPI docs has been saved to ${apiFileURL}\x1b[0m`);
   });
 };
+
+process.on('unhandledRejection', (reason) => {
+  console.log('unhandledRejection: ', reason);
+});

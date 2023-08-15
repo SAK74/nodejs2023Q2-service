@@ -5,7 +5,7 @@ import { CustomLogger } from 'src/services/logger.service';
 @Injectable()
 export class RequestLogger implements NestMiddleware {
   constructor(private logger: CustomLogger) {
-    logger.setContext(RequestLogger.name);
+    logger.setContext('HTTP');
   }
   use(req: IncomingMessage, res: ServerResponse, next: (error?: any) => void) {
     // here should be logger used

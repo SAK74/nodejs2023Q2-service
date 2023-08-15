@@ -7,6 +7,7 @@ import { FavoritesModule } from './routes/favorites/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RequestLogger } from './middleware/request-log.middleware';
 import { LoggerModule } from './services/logger.module';
+import { CustomLogger } from './services/logger.service';
 
 @Module({
   imports: [
@@ -24,5 +25,16 @@ import { LoggerModule } from './services/logger.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequestLogger).forRoutes('/');
+  }
+  constructor(private logger: CustomLogger) {
+    logger.setContext('NODE');
+    process.on('uncaughtException', (err, origin) => {
+      logger.setContext(origin);
+      logger.error(err.message);
+    });
+    process.on('unhandledRejection', (reason) => {
+      logger.setContext('unhandledRejection');
+      logger.error(reason as string);
+    });
   }
 }

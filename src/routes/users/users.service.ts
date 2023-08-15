@@ -9,7 +9,7 @@ import { CustomLogger } from 'src/services/logger.service';
 export class UsersService {
   constructor(
     private prisma: PrismaService,
-    private readonly logger: CustomLogger, //
+    private readonly logger: CustomLogger,
   ) {
     this.logger.setContext('Userssssssssssssssss');
   }

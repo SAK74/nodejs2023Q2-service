@@ -1,17 +1,28 @@
-import { LoggerService, ConsoleLogger } from '@nestjs/common';
+import {
+  LoggerService,
+  ConsoleLogger,
+  Injectable,
+  Scope,
+} from '@nestjs/common';
 
+@Injectable({ scope: Scope.TRANSIENT })
 export class CustomLogger extends ConsoleLogger implements LoggerService {
-  log(message: any, ...optionalParams: [...any, string?]): void {
+  // constructor(){
+  //   super()
+  // }
+  log(mess: any, ...optionalParams: [...any, string?]): void {
     console.log('log from logger!!!!!');
     // console.log(mess);
-    super.log(message, ...optionalParams);
+    super.log(mess, ...optionalParams);
   }
-  error(mess: any) {
+  error(mess: any, ...optionalParams: [...any, string?]): void {
     console.log('error from logger!!!!!');
-    console.log(mess);
+    super.log(mess, ...optionalParams);
+    // console.log(mess);
   }
-  warn(mess: any) {
+  warn(mess: any, ...optionalParams: [...any, string?]): void {
     console.log('warn from logger!!!!!');
-    console.log(mess);
+    super.log(mess, ...optionalParams);
+    // console.log(mess);
   }
 }
