@@ -1,17 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ErrMess } from 'src/services/errMessages';
+import { ErrMess } from 'src/types';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CustomLogger } from 'src/services/logger.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: CustomLogger, //
+  ) {
+    this.logger.setContext('Userssssssssssssssss');
+  }
+
+  // private logger = new Logger(UsersService.name);
   create(createUserDto: CreateUserDto) {
     return this.prisma.user.create({ data: { ...createUserDto, version: 1 } });
   }
 
   findAll() {
+    this.logger.log('some massage from get method!');
     return this.prisma.user.findMany();
   }
 

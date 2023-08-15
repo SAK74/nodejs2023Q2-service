@@ -7,6 +7,11 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { readFileSync, writeFile } from 'fs';
 import { resolve } from 'path';
 import { parse, stringify } from 'yaml';
+import {
+  RequestLogger,
+  requestLogger,
+} from './middleware/request-log.middleware';
+import { CustomLogger } from './services/logger.service';
 
 const PORT = process.env.PORT;
 const apiFileURL = resolve('./doc/open-api.yaml');
@@ -18,7 +23,12 @@ const config = new DocumentBuilder()
   .build();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    // logger: new CustomLogger(),
+    // logger: console,
+    bufferLogs: true,
+    logger: ['error'],
+  });
   let apiDocument: OpenAPIObject;
   if (process.env.NODE_ENV === 'development') {
     apiDocument = SwaggerModule.createDocument(app, config);
@@ -31,6 +41,10 @@ async function bootstrap() {
   console.log('\x1b[95mDocs have building in /docs path\x1b[0m');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new SetHeaderInterceptor());
+
+  // app.use(requestLogger);
+  app.useLogger(app.get(CustomLogger));
+
   await app.listen(PORT, () => {
     console.log(`\x1b[96mServer started in PORT ${PORT}\x1b[0m`);
   });

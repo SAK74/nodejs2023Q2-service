@@ -11,17 +11,21 @@ import {
   HttpStatus,
   HttpCode,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ErrMess } from 'src/services/errMessages';
+import { ErrMess } from 'src/types';
 import { Prisma } from '@prisma/client';
 
 @Controller('user')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+  ) // private readonly logger = new Logger(UsersController.name),
+  {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -30,6 +34,7 @@ export class UsersController {
 
   @Get()
   async findAll() {
+    // this.logger.log('some message from "get"');
     return (await this.usersService.findAll()).map((user) =>
       this.hidePassw(user),
     );
