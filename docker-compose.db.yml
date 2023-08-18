@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: my-postgresdb
+    build: ./db
+    restart: unless-stopped
+    environment:
+        - POSTGRES_USER=${POSTGRES_USER}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSW}
+        - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+        - postgres:/var/lib/postgresql/data
+    ports:
+        - ${PG_PORT}:${PG_PORT}
+
+volumes:
+  postgres:
+    name: my-db

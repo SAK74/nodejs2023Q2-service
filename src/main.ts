@@ -7,11 +7,7 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { readFileSync, writeFile } from 'fs';
 import { resolve } from 'path';
 import { parse, stringify } from 'yaml';
-import {
-  RequestLogger,
-  requestLogger,
-} from './middleware/request-log.middleware';
-import { CustomLogger } from './services/logger.service';
+import { CustomLogger } from './services/logger/logger.service';
 
 const PORT = process.env.PORT;
 const apiFileURL = resolve('./doc/open-api.yaml');
@@ -45,6 +41,8 @@ async function bootstrap() {
   // app.use(requestLogger);
   app.useLogger(new CustomLogger());
 
+  // app.useGlobalFilters(new CustomExceptionFilter())
+
   await app.listen(PORT, () => {
     console.log(`\x1b[96mServer started in PORT ${PORT}\x1b[0m`);
   });
@@ -58,5 +56,5 @@ const writeDocAPI = (document: string) => {
 };
 
 process.on('unhandledRejection', (reason) => {
-  console.log('unhandledRejection: ', reason);
+  console.log('unhandledRejection in main: ', reason);
 });

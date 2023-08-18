@@ -11,7 +11,6 @@ import {
   HttpStatus,
   HttpCode,
   NotFoundException,
-  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -22,10 +21,7 @@ import { Prisma } from '@prisma/client';
 
 @Controller('user')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-  ) // private readonly logger = new Logger(UsersController.name),
-  {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
@@ -34,7 +30,6 @@ export class UsersController {
 
   @Get()
   async findAll() {
-    // this.logger.log('some message from "get"');
     return (await this.usersService.findAll()).map((user) =>
       this.hidePassw(user),
     );
@@ -55,7 +50,7 @@ export class UsersController {
     try {
       return this.hidePassw(await this.usersService.findOne(id));
     } catch (err) {
-      console.log(err.message);
+      // console.log(err.message);
       if (err instanceof Prisma.NotFoundError) {
         throw new NotFoundException(err.message);
       }
@@ -72,7 +67,7 @@ export class UsersController {
         await this.usersService.paswChange(id, passwUpdate),
       );
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if ((err as Error).message === ErrMess.WRONG_PASSW) {
         throw new HttpException('Wrong password!', HttpStatus.FORBIDDEN);
       }
@@ -88,7 +83,7 @@ export class UsersController {
     try {
       await this.usersService.remove(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }

@@ -26,7 +26,6 @@ export class AlbumsController {
 
   @Get()
   findAll() {
-    // new Promise((resolve) => resolve(5)).then((res) => console.log(res));
     return this.albumsService.findAll();
   }
 
@@ -35,7 +34,6 @@ export class AlbumsController {
     try {
       return await this.albumsService.findOne(id);
     } catch (err) {
-      console.log(err);
       if (err instanceof Prisma.NotFoundError) {
         throw new NotFoundException(err.message);
       }
@@ -50,7 +48,7 @@ export class AlbumsController {
     try {
       return await this.albumsService.update(id, data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
@@ -61,7 +59,7 @@ export class AlbumsController {
     try {
       await this.albumsService.remove(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }

@@ -34,7 +34,7 @@ export class TracksController {
     try {
       return await this.tracksService.findOne(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err instanceof Prisma.NotFoundError) {
         throw new NotFoundException(err.message);
       }
@@ -49,7 +49,7 @@ export class TracksController {
     try {
       return await this.tracksService.update(id, data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
@@ -60,7 +60,7 @@ export class TracksController {
     try {
       await this.tracksService.remove(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }

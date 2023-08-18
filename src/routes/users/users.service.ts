@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/types';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CustomLogger } from 'src/services/logger.service';
+import { CustomLogger } from 'src/services/logger/logger.service';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +20,7 @@ export class UsersService {
   }
 
   findAll() {
-    this.logger.log('some massage from get method!');
+    this.logger.log('test massage from get method!');
     return this.prisma.user.findMany();
   }
 

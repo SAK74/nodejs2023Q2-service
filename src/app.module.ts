@@ -6,8 +6,10 @@ import { AlbumsModule } from './routes/albums/albums.module';
 import { FavoritesModule } from './routes/favorites/favorites.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RequestLogger } from './middleware/request-log.middleware';
-import { LoggerModule } from './services/logger.module';
-import { CustomLogger } from './services/logger.service';
+import { LoggerModule } from './services/logger/logger.module';
+import { CustomLogger } from './services/logger/logger.service';
+import { APP_FILTER } from '@nestjs/core';
+import { CustomExceptionFilter } from './services/exceptions/exception.filter';
 
 @Module({
   imports: [
@@ -20,14 +22,18 @@ import { CustomLogger } from './services/logger.service';
     LoggerModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: CustomExceptionFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequestLogger).forRoutes('/');
   }
   constructor(private logger: CustomLogger) {
-    logger.setContext('NODE');
     process.on('uncaughtException', (err, origin) => {
       logger.setContext(origin);
       logger.error(err.message);
