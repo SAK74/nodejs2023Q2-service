@@ -8,5 +8,6 @@ import { LoggerModule } from 'src/services/logger/logger.module';
   controllers: [UsersController],
   providers: [UsersService],
   imports: [PrismaModule, LoggerModule],
+  exports: [UsersService],
 })
 export class UsersModule {}
