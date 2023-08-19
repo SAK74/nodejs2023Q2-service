@@ -2,13 +2,18 @@ import {
   Body,
   Controller,
   Post,
-  ForbiddenException,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
+import { Public } from './decorators/public.decorator';
+import { RefreshGuard } from './refresh.guard';
+import { RequestWithLogin } from './types';
+import { hidePassw } from '../helpers';
 
 @Controller('auth')
 export class AuthController {
@@ -18,17 +23,23 @@ export class AuthController {
   ) {}
 
   @Post('signup')
+  @Public()
   async signup(@Body() signDto: CreateUserDto) {
-    await this.usersService.create(signDto);
+    return hidePassw(await this.usersService.create(signDto));
   }
 
   @Post('login')
+  @Public()
   @HttpCode(HttpStatus.OK)
   async login(@Body() signDto: CreateUserDto) {
-    try {
-      return await this.authService.login(signDto);
-    } catch (err) {
-      throw new ForbiddenException();
-    }
+    return await this.authService.login(signDto);
+  }
+
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RefreshGuard)
+  async refresh(@Request() req: RequestWithLogin) {
+    // console.log(req?.userLogin);
+    return await this.authService.refresh(req?.userLogin);
   }
 }

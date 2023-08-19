@@ -302,6 +302,13 @@ paths:
       responses:
         "200":
           description: ""
+  /auth/refresh:
+    post:
+      operationId: AuthController_refresh
+      parameters: []
+      responses:
+        "200":
+          description: ""
 info:
   title: Home Library Service
   description: Home music library service

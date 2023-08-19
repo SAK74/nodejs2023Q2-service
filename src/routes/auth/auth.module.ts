@@ -17,19 +17,11 @@ import { AuthGuard } from './auth.guard';
   ],
   imports: [
     UsersModule,
-    // {
-    //   ...JwtModule.register({
-    //     secret: process.env.JWT_SECRET_KEY,
-    //   }),
-    //   global: true,
-    // },
+
     {
       global: true,
       module: JwtModule,
-    }.module.register({
-      secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME },
-    }),
+    }.module.register({}),
   ],
 })
 export class AuthModule {}

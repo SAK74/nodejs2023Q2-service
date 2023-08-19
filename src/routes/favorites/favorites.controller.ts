@@ -12,12 +12,10 @@ import {
 import { FavoritesService } from './favorites.service';
 import { FavsTypeValidatePipe } from './pipes/favs-type-validate.pipe';
 import { StatusCodes } from 'http-status-codes';
-import { Public } from 'src/decorators/public.decorator';
 
 export type Member = 'artist' | 'album' | 'track';
 
 @Controller('favs')
-@Public()
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
@@ -28,10 +26,6 @@ export class FavoritesController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     if (!(await this.favoritesService.addToFavs(member, id))) {
-      // throw new HttpException(
-      //   getReasonPhrase(HttpStatus.UNPROCESSABLE_ENTITY),
-      //   HttpStatus.UNPROCESSABLE_ENTITY,
-      // );
       throw new UnprocessableEntityException();
     }
   }
