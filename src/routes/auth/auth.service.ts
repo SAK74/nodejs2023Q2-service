@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -10,7 +11,7 @@ export class AuthService {
     const user = (await this.usersService.findAll()).find(
       (user) => user.login === login,
     );
-    if (!user || user.password !== password) {
+    if (!user || !compare(password, user.password)) {
       throw new UnauthorizedException("User don't exist");
     }
     return {
