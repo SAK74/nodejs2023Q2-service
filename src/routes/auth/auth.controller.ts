@@ -25,6 +25,7 @@ export class AuthController {
   @Post('signup')
   @Public()
   async signup(@Body() signDto: CreateUserDto) {
+    // throw Error('Oppps...');
     return hidePassw(await this.usersService.create(signDto));
   }
 

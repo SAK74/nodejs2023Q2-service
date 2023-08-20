@@ -9,9 +9,8 @@ import { compare, genSalt, hash } from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(
-    private prisma: PrismaService,
-  ) // private readonly logger: CustomLogger,
-  {
+    private prisma: PrismaService, // private readonly logger: CustomLogger,
+  ) {
     // this.logger.setContext('Userssssssssssssssss');
   }
 

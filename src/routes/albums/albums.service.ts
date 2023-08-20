@@ -12,7 +12,6 @@ export class AlbumsService {
   }
 
   findAll() {
-    // throw new Error('Opps...!');
     return this.prisma.album.findMany();
   }
 

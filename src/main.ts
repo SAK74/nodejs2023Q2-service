@@ -20,10 +20,8 @@ const config = new DocumentBuilder()
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    // logger: new CustomLogger(),
-    // logger: console,
+    logger: new CustomLogger(),
     bufferLogs: true,
-    logger: ['error'],
   });
   let apiDocument: OpenAPIObject;
   if (process.env.NODE_ENV === 'development') {
@@ -39,7 +37,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new SetHeaderInterceptor());
 
   // app.use(requestLogger);
-  app.useLogger(new CustomLogger());
+  // app.useLogger(new CustomLogger());
 
   // app.useGlobalFilters(new CustomExceptionFilter())
 
@@ -49,12 +47,10 @@ async function bootstrap() {
 }
 bootstrap();
 
+// throw Error('Oppps...');
+
 const writeDocAPI = (document: string) => {
   writeFile(apiFileURL, document, { encoding: 'utf8' }, () => {
     console.log(`\x1b[95mAPI docs has been saved to ${apiFileURL}\x1b[0m`);
   });
 };
-
-process.on('unhandledRejection', (reason) => {
-  console.log('unhandledRejection in main: ', reason);
-});

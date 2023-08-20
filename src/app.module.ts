@@ -37,11 +37,11 @@ export class AppModule implements NestModule {
   }
   constructor(private logger: CustomLogger) {
     process.on('uncaughtException', (err, origin) => {
-      logger.setContext(origin);
+      logger.setContext('Custom' + origin);
       logger.error(err.message);
     });
     process.on('unhandledRejection', (reason) => {
-      logger.setContext('unhandledRejection');
+      logger.setContext('Custom unhandledRejection');
       logger.error(reason as string);
     });
   }
