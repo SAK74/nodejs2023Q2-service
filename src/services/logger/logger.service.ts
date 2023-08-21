@@ -8,8 +8,9 @@ export class CustomLogger implements LoggerService {
   private context = '';
   constructor() {
     const {
-      format: { combine, printf, label, timestamp, colorize },
+      format: { combine, printf, label, timestamp, colorize, json },
     } = winston;
+    const fileFormat = combine(timestamp(), json());
     const myFormat = printf(
       (info) =>
         `${info.label} ${info.timestamp} [${info.level}]: ${info.message}`,
@@ -23,32 +24,37 @@ export class CustomLogger implements LoggerService {
         ERROR: 0,
       },
       level: process.env.LOG_LEVEL,
-      format: combine(
-        label({ label: 'Nest' }),
-        colorize(),
-        timestamp({}),
-        myFormat,
-      ),
+
+      format: fileFormat,
       transports: [
-        new winston.transports.Console({
-          handleExceptions: true,
-          handleRejections: true,
-        }),
         new winston.transports.File({
           level: 'ERROR',
           dirname: path.resolve(__dirname, '../../../../logs'),
           filename: 'errors.log',
           maxsize: Number(process.env.MAX_FILE_SIZE) * 1000,
-          format: winston.format.json(),
         }),
         new winston.transports.File({
           dirname: path.resolve(__dirname, '../../../../logs'),
           filename: 'common.log',
           maxsize: Number(process.env.MAX_FILE_SIZE) * 1000,
-          format: winston.format.json(),
         }),
       ],
     });
+    if (process.env.NODE_ENV === 'development') {
+      this.logger.add(
+        new winston.transports.Console({
+          handleExceptions: true,
+          handleRejections: true,
+          format: combine(
+            label({ label: 'Nest' }),
+            colorize(),
+            timestamp({}),
+            myFormat,
+          ),
+        }),
+      );
+    }
+
     winston.addColors({
       DEBUG: 'magenta yellowBG',
       VERBOSE: 'lightblue',

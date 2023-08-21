@@ -36,14 +36,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new SetHeaderInterceptor());
 
-  // app.use(requestLogger);
-  // app.useLogger(new CustomLogger());
-
-  // app.useGlobalFilters(new CustomExceptionFilter())
-
   await app.listen(PORT, () => {
     console.log(`\x1b[96mServer started in PORT ${PORT}\x1b[0m`);
   });
+  // throw Error('Oppps...');
 }
 bootstrap();
 
