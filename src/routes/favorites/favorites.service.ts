@@ -17,7 +17,6 @@ export class FavoritesService {
           return await this.prisma.favTrack.create({ data: { trackId: id } });
       }
     } catch (err) {
-      console.log('err in  favorites service: ', err);
       return false;
     }
   }

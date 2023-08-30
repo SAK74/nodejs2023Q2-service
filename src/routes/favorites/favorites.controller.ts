@@ -5,14 +5,13 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
-  HttpException,
-  HttpStatus,
   HttpCode,
   NotFoundException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { FavsTypeValidatePipe } from './pipes/favs-type-validate.pipe';
-import { StatusCodes, getReasonPhrase } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 
 export type Member = 'artist' | 'album' | 'track';
 
@@ -27,10 +26,7 @@ export class FavoritesController {
     @Param('id', ParseUUIDPipe) id: string,
   ) {
     if (!(await this.favoritesService.addToFavs(member, id))) {
-      throw new HttpException(
-        getReasonPhrase(HttpStatus.UNPROCESSABLE_ENTITY),
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      throw new UnprocessableEntityException();
     }
   }
 
@@ -49,7 +45,7 @@ export class FavoritesController {
     try {
       await this.favoritesService.removeFromFavs(member, id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }

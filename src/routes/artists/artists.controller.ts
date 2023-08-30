@@ -34,7 +34,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.findOne(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err instanceof Prisma.NotFoundError) {
         throw new NotFoundException(err.message);
       }
@@ -49,7 +49,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.update(id, data);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
@@ -60,7 +60,7 @@ export class ArtistsController {
     try {
       await this.artistsService.remove(id);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }

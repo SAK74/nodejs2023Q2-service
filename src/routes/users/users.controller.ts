@@ -14,10 +14,10 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ErrMess } from 'src/services/errMessages';
+import { ErrMess } from 'src/types';
 import { Prisma } from '@prisma/client';
+import { hidePassw } from '../helpers';
 
 @Controller('user')
 export class UsersController {
@@ -25,32 +25,20 @@ export class UsersController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    return this.hidePassw(await this.usersService.create(createUserDto));
+    return hidePassw(await this.usersService.create(createUserDto));
   }
 
   @Get()
   async findAll() {
-    return (await this.usersService.findAll()).map((user) =>
-      this.hidePassw(user),
-    );
-  }
-
-  private hidePassw(user: User) {
-    const res = {
-      ...user,
-      createdAt: new Date(user.createdAt).getTime(),
-      updatedAt: new Date(user.updatedAt).getTime(),
-    };
-    delete res.password;
-    return res;
+    return (await this.usersService.findAll()).map((user) => hidePassw(user));
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      return this.hidePassw(await this.usersService.findOne(id));
+      return hidePassw(await this.usersService.findOne(id));
     } catch (err) {
-      console.log(err.message);
+      // console.log(err.message);
       if (err instanceof Prisma.NotFoundError) {
         throw new NotFoundException(err.message);
       }
@@ -63,11 +51,8 @@ export class UsersController {
     @Body() passwUpdate: UpdatePasswordDto,
   ) {
     try {
-      return this.hidePassw(
-        await this.usersService.paswChange(id, passwUpdate),
-      );
+      return hidePassw(await this.usersService.paswChange(id, passwUpdate));
     } catch (err) {
-      console.log(err);
       if ((err as Error).message === ErrMess.WRONG_PASSW) {
         throw new HttpException('Wrong password!', HttpStatus.FORBIDDEN);
       }
@@ -83,7 +68,6 @@ export class UsersController {
     try {
       await this.usersService.remove(id);
     } catch (err) {
-      console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
