@@ -33,7 +33,9 @@ npm install
 - add neccessary variables to `.env` (like as `.env.example`)
 - :exclamation: run **`Docker Desctop`**  
 </br>
-## There are two ways to running project:
+
+## There are two ways to running project:  
+
 1. ## Running application & db in Docker container together  
    In **current dirrectory:**
 
