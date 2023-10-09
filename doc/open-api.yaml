@@ -1,8 +1,27 @@
 openapi: 3.0.0
 paths:
   /user:
+    get:
+      operationId: UsersController_findAll
+      summary: Get all users
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDto"
+        "401": &a1
+          description: Unauthorized.
+      tags: &a2
+        - Users
     post:
       operationId: UsersController_create
+      summary: Add user
+      description: Add simple user
       parameters: []
       requestBody:
         required: true
@@ -13,15 +32,19 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: UsersController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+      tags: *a2
   "/user/{id}":
     get:
       operationId: UsersController_findOne
+      summary: Get certain user
+      description: Get user with id
       parameters:
         - name: id
           required: true
@@ -31,8 +54,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+        "404":
+          description: Entity not exist
+      tags: *a2
     put:
       operationId: UsersController_passwChange
+      summary: Change password
+      description: Change user password
       parameters:
         - name: id
           required: true
@@ -48,8 +83,21 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+        "403":
+          description: Wrong password.
+        "404":
+          description: Entity not exist
+      tags: *a2
     delete:
       operationId: UsersController_remove
+      summary: Delete user
       parameters:
         - name: id
           required: true
@@ -58,7 +106,13 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: User has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a1
+        "404":
+          description: Entity not exist
+      tags: *a2
   /artist:
     post:
       operationId: ArtistsController_create
@@ -289,6 +343,10 @@ paths:
       responses:
         "201":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
   /auth/login:
     post:
       operationId: AuthController_login
@@ -317,19 +375,86 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
+    UserDto:
+      type: object
+      properties:
+        createdAt:
+          type: number
+          example: 1696878582867
+        updatedAt:
+          type: number
+          example: 1696878582868
+        version:
+          type: number
+          example: 1
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+          example: Mike12
+      required:
+        - createdAt
+        - updatedAt
+        - version
+        - id
+        - login
     CreateUserDto:
       type: object
-      properties: {}
+      properties:
+        login:
+          type: string
+          description: User login
+        password:
+          type: string
+          description: User password
+      required:
+        - login
+        - password
     UpdatePasswordDto:
       type: object
-      properties: {}
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - oldPassword
+        - newPassword
     CreateArtistDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - name
+        - grammy
     CreateTrackDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        artistId:
+          type: string
+          nullable: true
+        albumId:
+          type: string
+          nullable: true
+        duration:
+          type: number
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration
     CreateAlbumDto:
       type: object
       properties: {}
