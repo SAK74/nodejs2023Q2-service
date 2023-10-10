@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FavoritesResponse } from './types';
+import { FavoritesResponse } from './dto/favorites.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Member } from './favorites.controller';
 

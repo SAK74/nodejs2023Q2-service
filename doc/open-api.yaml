@@ -237,7 +237,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Track"
-      tags: &a5
+        "401": &a5
+          description: Unauthorized
+      tags: &a6
         - Tracks
     post:
       operationId: TracksController_create
@@ -258,7 +260,8 @@ paths:
                 $ref: "#/components/schemas/Track"
         "400":
           description: Bad request
-      tags: *a5
+        "401": *a5
+      tags: *a6
   "/track/{id}":
     get:
       operationId: TracksController_findOne
@@ -279,9 +282,10 @@ paths:
                 $ref: "#/components/schemas/Track"
         "400":
           description: Bad request
+        "401": *a5
         "404":
           description: Entity not exist
-      tags: *a5
+      tags: *a6
     put:
       operationId: TracksController_update
       summary: Edit single track
@@ -306,9 +310,10 @@ paths:
                 $ref: "#/components/schemas/Track"
         "400":
           description: Bad request
+        "401": *a5
         "404":
           description: Entity not exist
-      tags: *a5
+      tags: *a6
     delete:
       operationId: TracksController_remove
       summary: Delete single track
@@ -321,9 +326,10 @@ paths:
       responses:
         "204":
           description: Entity has been deleted successfully
+        "401": *a5
         "404":
           description: Entity not exist
-      tags: *a5
+      tags: *a6
   /album:
     get:
       operationId: AlbumsController_findAll
@@ -338,9 +344,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Album"
-        "401": &a6
+        "401": &a7
           description: Unauthorized
-      tags: &a7
+      tags: &a8
         - Albums
     post:
       operationId: AlbumsController_create
@@ -361,8 +367,8 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a6
-      tags: *a7
+        "401": *a7
+      tags: *a8
   "/album/{id}":
     get:
       operationId: AlbumsController_findOne
@@ -383,10 +389,10 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a6
+        "401": *a7
         "404":
           description: Entity not found
-      tags: *a7
+      tags: *a8
     put:
       operationId: AlbumsController_update
       summary: Edit single album
@@ -412,10 +418,10 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a6
+        "401": *a7
         "404":
           description: Entity not found
-      tags: *a7
+      tags: *a8
     delete:
       operationId: AlbumsController_remove
       summary: Delete single album
@@ -431,50 +437,85 @@ paths:
           description: Entity has been deleted successfully
         "400":
           description: Bad request
-        "401": *a6
+        "401": *a7
         "404":
           description: Entity not found
-      tags: *a7
-  "/favs/{member}/{id}":
-    post:
-      operationId: FavoritesController_addMemberToFavorite
-      parameters:
-        - name: member
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "201":
-          description: ""
-    delete:
-      operationId: FavoritesController_removeFromFavs
-      parameters:
-        - name: member
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "204":
-          description: ""
+      tags: *a8
   /favs:
     get:
       operationId: FavoritesController_findAll
+      summary: Get all favorites
       parameters: []
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoritesResponse"
+        "401": &a9
+          description: Unauthorized
+      tags: &a10
+        - Favorites
+  "/favs/{member}/{id}":
+    post:
+      operationId: FavoritesController_addMemberToFavorite
+      summary: Add to favorites
+      description: Add artist/album/track to favs
+      parameters:
+        - name: member
+          required: true
+          in: path
+          schema:
+            type: string
+            enum:
+              - artist
+              - album
+              - track
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "201":
+          description: Member has been added to favorites
+        "400":
+          description: Bad request
+        "401": *a9
+        "422":
+          description: Entity does't exist
+      tags: *a10
+    delete:
+      operationId: FavoritesController_removeFromFavs
+      summary: Remove from favorites
+      description: Remove artist/ album / track from favorites
+      parameters:
+        - name: member
+          required: true
+          in: path
+          schema:
+            type: string
+            enum:
+              - artist
+              - album
+              - track
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Member has been removed from favorites
+        "400":
+          description: Bad request
+        "401": *a9
+        "404":
+          description: Member does't exist
+      tags: *a10
   /auth/signup:
     post:
       operationId: AuthController_signup
@@ -531,10 +572,10 @@ components:
       properties:
         createdAt:
           type: number
-          example: 1696957943351
+          example: 1696961439095
         updatedAt:
           type: number
-          example: 1696957943352
+          example: 1696961439096
         version:
           type: number
           example: 1
@@ -679,3 +720,22 @@ components:
       required:
         - name
         - year
+    FavoritesResponse:
+      type: object
+      properties:
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        albums:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        tracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Track"
+      required:
+        - artists
+        - albums
+        - tracks

@@ -20,10 +20,12 @@ import {
   ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
 
 @ApiTags('Tracks')
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
