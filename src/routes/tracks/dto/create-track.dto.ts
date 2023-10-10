@@ -1,4 +1,3 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { Track } from '../entities/track.entity';
 import {
   IsDefined,
@@ -7,10 +6,17 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { OmitType } from '@nestjs/swagger';
 
-export class CreateTrackDto extends PartialType(Track) {
+export class CreateTrackDto extends OmitType(Track, ['id']) {
   @IsDefined() @IsString() name: string;
-  @IsOptional() @IsString() @IsUUID() artistId: string | null;
-  @IsOptional() @IsString() @IsUUID() albumId: string | null;
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  artistId: string | null;
+  @IsOptional()
+  @IsString()
+  @IsUUID()
+  albumId: string | null;
   @IsDefined() @IsNumber() duration: number;
 }

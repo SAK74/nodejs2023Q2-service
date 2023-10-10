@@ -224,8 +224,24 @@ paths:
           description: Entity not exist
       tags: *a4
   /track:
+    get:
+      operationId: TracksController_findAll
+      summary: Get all tracks
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Track"
+      tags: &a5
+        - Tracks
     post:
       operationId: TracksController_create
+      summary: Add single track
       parameters: []
       requestBody:
         required: true
@@ -236,15 +252,18 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: TracksController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+      tags: *a5
   "/track/{id}":
     get:
       operationId: TracksController_findOne
+      summary: Get single track
+      description: Get track by ID
       parameters:
         - name: id
           required: true
@@ -254,8 +273,18 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+        "404":
+          description: Entity not exist
+      tags: *a5
     put:
       operationId: TracksController_update
+      summary: Edit single track
       parameters:
         - name: id
           required: true
@@ -271,8 +300,18 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+        "404":
+          description: Entity not exist
+      tags: *a5
     delete:
       operationId: TracksController_remove
+      summary: Delete single track
       parameters:
         - name: id
           required: true
@@ -281,7 +320,10 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "404":
+          description: Entity not exist
+      tags: *a5
   /album:
     get:
       operationId: AlbumsController_findAll
@@ -296,9 +338,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Album"
-        "401": &a5
+        "401": &a6
           description: Unauthorized
-      tags: &a6
+      tags: &a7
         - Albums
     post:
       operationId: AlbumsController_create
@@ -319,8 +361,8 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a5
-      tags: *a6
+        "401": *a6
+      tags: *a7
   "/album/{id}":
     get:
       operationId: AlbumsController_findOne
@@ -341,10 +383,10 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a5
+        "401": *a6
         "404":
           description: Entity not found
-      tags: *a6
+      tags: *a7
     put:
       operationId: AlbumsController_update
       summary: Edit single album
@@ -370,10 +412,10 @@ paths:
                 $ref: "#/components/schemas/Album"
         "400":
           description: Bad request
-        "401": *a5
+        "401": *a6
         "404":
           description: Entity not found
-      tags: *a6
+      tags: *a7
     delete:
       operationId: AlbumsController_remove
       summary: Delete single album
@@ -389,10 +431,10 @@ paths:
           description: Entity has been deleted successfully
         "400":
           description: Bad request
-        "401": *a5
+        "401": *a6
         "404":
           description: Entity not found
-      tags: *a6
+      tags: *a7
   "/favs/{member}/{id}":
     post:
       operationId: FavoritesController_addMemberToFavorite
@@ -489,10 +531,10 @@ components:
       properties:
         createdAt:
           type: number
-          example: 1696956256066
+          example: 1696957943351
         updatedAt:
           type: number
-          example: 1696956256067
+          example: 1696957943352
         version:
           type: number
           example: 1
@@ -555,23 +597,51 @@ components:
       required:
         - name
         - grammy
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Oh My Love
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+        albumId:
+          type: string
+          nullable: true
+          format: uuid
+        duration:
+          type: number
+          example: 229
+          description: duration in sec
+      required:
+        - id
+        - name
+        - duration
     CreateTrackDto:
       type: object
       properties:
         name:
           type: string
+          example: Oh My Love
         artistId:
           type: string
           nullable: true
+          format: uuid
         albumId:
           type: string
           nullable: true
+          format: uuid
         duration:
           type: number
+          example: 229
+          description: duration in sec
       required:
         - name
-        - artistId
-        - albumId
         - duration
     Album:
       type: object
