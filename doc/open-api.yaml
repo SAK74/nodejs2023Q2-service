@@ -114,8 +114,27 @@ paths:
           description: Entity not exist
       tags: *a2
   /artist:
+    get:
+      operationId: ArtistsController_findAll
+      summary: Get all artists
+      description: Get all artists
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Artist"
+        "401": &a3
+          description: Unauthorized.
+      tags: &a4
+        - Artists
     post:
       operationId: ArtistsController_create
+      summary: Add single artist
       parameters: []
       requestBody:
         required: true
@@ -126,15 +145,19 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: ArtistsController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a3
+      tags: *a4
   "/artist/{id}":
     get:
       operationId: ArtistsController_findOne
+      summary: Get single artists
+      description: Get single artists
       parameters:
         - name: id
           required: true
@@ -144,8 +167,19 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a3
+        "404":
+          description: Entity not exist
+      tags: *a4
     put:
       operationId: ArtistsController_update
+      summary: Edit single artist
       parameters:
         - name: id
           required: true
@@ -161,8 +195,19 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a3
+        "404":
+          description: Entity not exist
+      tags: *a4
     delete:
       operationId: ArtistsController_remove
+      summary: Delete artist entity
       parameters:
         - name: id
           required: true
@@ -171,7 +216,13 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a3
+        "404":
+          description: Entity not exist
+      tags: *a4
   /track:
     post:
       operationId: TracksController_create
@@ -386,10 +437,10 @@ components:
       properties:
         createdAt:
           type: number
-          example: 1696878582867
+          example: 1696951430440
         updatedAt:
           type: number
-          example: 1696878582868
+          example: 1696951430441
         version:
           type: number
           example: 1
@@ -427,6 +478,21 @@ components:
       required:
         - oldPassword
         - newPassword
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: John Lenon
+        grammy:
+          type: boolean
+      required:
+        - id
+        - name
+        - grammy
     CreateArtistDto:
       type: object
       properties:

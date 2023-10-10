@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
-import { Artist } from './entities/artist.entity';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ArtistsService {
-  artists: Artist[] = [];
+  // artists: Artist[] = [];
   constructor(private prisma: PrismaService) {}
   create(data: CreateArtistDto) {
     return this.prisma.artist.create({ data });
