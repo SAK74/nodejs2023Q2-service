@@ -283,8 +283,26 @@ paths:
         "204":
           description: ""
   /album:
+    get:
+      operationId: AlbumsController_findAll
+      summary: Get all albums
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Album"
+        "401": &a5
+          description: Unauthorized
+      tags: &a6
+        - Albums
     post:
       operationId: AlbumsController_create
+      summary: Add single album
       parameters: []
       requestBody:
         required: true
@@ -295,15 +313,19 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: AlbumsController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a5
+      tags: *a6
   "/album/{id}":
     get:
       operationId: AlbumsController_findOne
+      summary: Get single album
+      description: Get single album by id
       parameters:
         - name: id
           required: true
@@ -313,13 +335,25 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a5
+        "404":
+          description: Entity not found
+      tags: *a6
     put:
       operationId: AlbumsController_update
+      summary: Edit single album
       parameters:
         - name: id
           required: true
           in: path
           schema:
+            format: uuid
             type: string
       requestBody:
         required: true
@@ -330,8 +364,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a5
+        "404":
+          description: Entity not found
+      tags: *a6
     delete:
       operationId: AlbumsController_remove
+      summary: Delete single album
+      description: Delete album by id
       parameters:
         - name: id
           required: true
@@ -340,7 +386,13 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a5
+        "404":
+          description: Entity not found
+      tags: *a6
   "/favs/{member}/{id}":
     post:
       operationId: FavoritesController_addMemberToFavorite
@@ -437,10 +489,10 @@ components:
       properties:
         createdAt:
           type: number
-          example: 1696951430440
+          example: 1696956256066
         updatedAt:
           type: number
-          example: 1696951430441
+          example: 1696956256067
         version:
           type: number
           example: 1
@@ -521,6 +573,39 @@ components:
         - artistId
         - albumId
         - duration
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Imagine
+        year:
+          type: number
+          example: 1971
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+      required:
+        - id
+        - name
+        - year
     CreateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Imagine
+        year:
+          type: number
+          example: 1971
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+      required:
+        - name
+        - year

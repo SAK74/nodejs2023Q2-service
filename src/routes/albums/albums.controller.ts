@@ -14,23 +14,44 @@ import {
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Prisma } from '@prisma/client';
+import {
+  ApiBadRequestResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { Album } from './entities/album.entity';
 
+@ApiTags('Albums')
+@ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
-  @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
-  }
-
+  @ApiOperation({ summary: 'Get all albums' })
   @Get()
-  findAll() {
+  findAll(): Promise<Album[]> {
     return this.albumsService.findAll();
   }
 
+  @ApiOperation({ summary: 'Add single album' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @Post()
+  create(@Body() createAlbumDto: CreateAlbumDto): Promise<Album> {
+    return this.albumsService.create(createAlbumDto);
+  }
+
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not found' })
+  @ApiOperation({
+    summary: 'Get single album',
+    description: 'Get single album by id',
+  })
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Album> {
     try {
       return await this.albumsService.findOne(id);
     } catch (err) {
@@ -40,26 +61,35 @@ export class AlbumsController {
     }
   }
 
+  @ApiOperation({ summary: 'Edit single album' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not found' })
+  @ApiParam({ format: 'uuid', name: 'id' })
   @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() data: CreateAlbumDto,
-  ) {
+  ): Promise<Album> {
     try {
       return await this.albumsService.update(id, data);
     } catch (err) {
-      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
 
+  @ApiOperation({
+    summary: 'Delete single album',
+    description: 'Delete album by id',
+  })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not found' })
+  @ApiNoContentResponse({ description: 'Entity has been deleted successfully' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       await this.albumsService.remove(id);
     } catch (err) {
-      // console.log(err);
       throw new NotFoundException(err.meta?.cause);
     }
   }
