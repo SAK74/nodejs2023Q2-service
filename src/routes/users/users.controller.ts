@@ -26,8 +26,10 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiNoContentResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @ApiTags('Users')
 @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
 @Controller('user')

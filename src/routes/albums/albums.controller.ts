@@ -16,6 +16,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { Prisma } from '@prisma/client';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -25,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { Album } from './entities/album.entity';
 
+@ApiBearerAuth()
 @ApiTags('Albums')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('album')

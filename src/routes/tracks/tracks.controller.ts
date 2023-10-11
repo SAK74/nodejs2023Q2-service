@@ -16,6 +16,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { Prisma } from '@prisma/client';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -24,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { Track } from './entities/track.entity';
 
+@ApiBearerAuth()
 @ApiTags('Tracks')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('track')

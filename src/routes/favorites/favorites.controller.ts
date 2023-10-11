@@ -14,6 +14,7 @@ import { FavsTypeValidatePipe } from './pipes/favs-type-validate.pipe';
 import { StatusCodes } from 'http-status-codes';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -26,6 +27,7 @@ import {
 
 export type Member = 'artist' | 'album' | 'track';
 
+@ApiBearerAuth()
 @ApiTags('Favorites')
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
 @Controller('favs')

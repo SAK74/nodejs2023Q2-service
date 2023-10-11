@@ -14,7 +14,23 @@ import { Public } from './decorators/public.decorator';
 import { RefreshGuard } from './refresh.guard';
 import { RequestWithLogin } from './types';
 import { hidePassw } from '../helpers';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
+const _token: SchemaObject = {
+  type: 'string',
+  description: 'JWT token',
+};
+
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -22,6 +38,8 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
+  @ApiOperation({ summary: 'Signup', description: 'User signup' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
   @Post('signup')
   @Public()
   async signup(@Body() signDto: CreateUserDto) {
@@ -29,6 +47,19 @@ export class AuthController {
     return hidePassw(await this.usersService.create(signDto));
   }
 
+  @ApiOperation({
+    summary: 'Login',
+    description: 'Logins a user and returns a JWT-token',
+  })
+  @ApiOkResponse({
+    description: 'Successfull login',
+    schema: {
+      type: 'object',
+      properties: { accesToken: _token, refreshToken: _token },
+    },
+  })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiForbiddenResponse({ description: 'Incorrect login or password' })
   @Post('login')
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -36,6 +67,20 @@ export class AuthController {
     return await this.authService.login(signDto);
   }
 
+  @ApiOperation({ summary: 'Refresh token', description: 'Get refresh token' })
+  @ApiBody({
+    description: 'Refresh token',
+    schema: { type: 'object', properties: { refreshToken: _token } },
+  })
+  @ApiOkResponse({
+    description: 'New tokens pair',
+    schema: {
+      type: 'object',
+      properties: { accesToken: _token, refreshToken: _token },
+    },
+  })
+  @ApiForbiddenResponse({ description: 'Refresh token is invalid or expired' })
+  @ApiUnauthorizedResponse({ description: 'No jwt provided!' })
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshGuard)

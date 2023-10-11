@@ -16,6 +16,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { Prisma } from '@prisma/client';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -24,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { Artist } from './entities/artist.entity';
 
+@ApiBearerAuth()
 @ApiTags('Artists')
 @ApiUnauthorizedResponse({ description: 'Unauthorized.' })
 @Controller('artist')
