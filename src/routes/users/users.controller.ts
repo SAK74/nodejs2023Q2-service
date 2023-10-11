@@ -18,21 +18,36 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ErrMess } from 'src/types';
 import { Prisma } from '@prisma/client';
 import { hidePassw } from '../helpers';
+import {
+  ApiTags,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiUnauthorizedResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiNoContentResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Users')
+@ApiUnauthorizedResponse({ description: 'Unauthorized.' })
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    return hidePassw(await this.usersService.create(createUserDto));
-  }
-
+  @ApiOperation({ summary: 'Get all users' })
   @Get()
   async findAll() {
     return (await this.usersService.findAll()).map((user) => hidePassw(user));
   }
 
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not exist' })
+  @ApiOperation({
+    summary: 'Get certain user',
+    description: 'Get user with id',
+  })
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
@@ -45,6 +60,20 @@ export class UsersController {
     }
   }
 
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiOperation({ summary: 'Add user', description: 'Add simple user' })
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return hidePassw(await this.usersService.create(createUserDto));
+  }
+
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not exist' })
+  @ApiForbiddenResponse({ description: 'Wrong password.' })
+  @ApiOperation({
+    summary: 'Change password',
+    description: 'Change user password',
+  })
   @Put(':id')
   async passwChange(
     @Param('id', ParseUUIDPipe) id: string,
@@ -62,6 +91,10 @@ export class UsersController {
     }
   }
 
+  @ApiNoContentResponse({ description: 'User has been deleted successfully' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiNotFoundResponse({ description: 'Entity not exist' })
+  @ApiOperation({ summary: 'Delete user' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {

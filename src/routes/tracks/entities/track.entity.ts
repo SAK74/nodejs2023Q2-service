@@ -1,7 +1,10 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 export class Track {
-  id: string; // uuid v4
-  name: string;
-  artistId: string | null; // refers to Artist
-  albumId: string | null; // refers to Album
+  @ApiProperty({ format: 'uuid' }) id: string; // uuid v4
+  @ApiProperty({ example: 'Oh My Love' }) name: string;
+  @ApiPropertyOptional({ format: 'uuid' }) artistId: string | null; // refers to Artist
+  @ApiPropertyOptional({ format: 'uuid' }) albumId: string | null; // refers to Album
+  @ApiProperty({ example: 229, description: 'duration in sec' })
   duration: number; // integer number
 }

@@ -1,6 +1,8 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+
 export class Album {
-  id: string; // uuid v4
-  name: string;
-  year: number;
-  artistId: string | null; // refers to Artist
+  @ApiProperty({ format: 'uuid' }) id: string; // uuid v4
+  @ApiProperty({ example: 'Imagine' }) name: string;
+  @ApiProperty({ example: 1971 }) year: number;
+  @ApiPropertyOptional({ format: 'uuid' }) artistId: string | null; // refers to Artist
 }

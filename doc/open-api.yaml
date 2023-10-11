@@ -1,8 +1,29 @@
 openapi: 3.0.0
 paths:
   /user:
+    get:
+      operationId: UsersController_findAll
+      summary: Get all users
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserDto"
+        "401": &a1
+          description: Unauthorized.
+      tags: &a2
+        - Users
+      security: &a3
+        - bearer: []
     post:
       operationId: UsersController_create
+      summary: Add user
+      description: Add simple user
       parameters: []
       requestBody:
         required: true
@@ -13,15 +34,20 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: UsersController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+      tags: *a2
+      security: *a3
   "/user/{id}":
     get:
       operationId: UsersController_findOne
+      summary: Get certain user
+      description: Get user with id
       parameters:
         - name: id
           required: true
@@ -31,8 +57,21 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+        "404":
+          description: Entity not exist
+      tags: *a2
+      security: *a3
     put:
       operationId: UsersController_passwChange
+      summary: Change password
+      description: Change user password
       parameters:
         - name: id
           required: true
@@ -48,8 +87,22 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+        "401": *a1
+        "403":
+          description: Wrong password.
+        "404":
+          description: Entity not exist
+      tags: *a2
+      security: *a3
     delete:
       operationId: UsersController_remove
+      summary: Delete user
       parameters:
         - name: id
           required: true
@@ -58,10 +111,38 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: User has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a1
+        "404":
+          description: Entity not exist
+      tags: *a2
+      security: *a3
   /artist:
+    get:
+      operationId: ArtistsController_findAll
+      summary: Get all artists
+      description: Get all artists
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Artist"
+        "401": &a4
+          description: Unauthorized.
+      tags: &a5
+        - Artists
+      security: &a6
+        - bearer: []
     post:
       operationId: ArtistsController_create
+      summary: Add single artist
       parameters: []
       requestBody:
         required: true
@@ -72,15 +153,20 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: ArtistsController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a4
+      tags: *a5
+      security: *a6
   "/artist/{id}":
     get:
       operationId: ArtistsController_findOne
+      summary: Get single artists
+      description: Get single artists
       parameters:
         - name: id
           required: true
@@ -90,8 +176,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a4
+        "404":
+          description: Entity not exist
+      tags: *a5
+      security: *a6
     put:
       operationId: ArtistsController_update
+      summary: Edit single artist
       parameters:
         - name: id
           required: true
@@ -107,8 +205,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Bad request
+        "401": *a4
+        "404":
+          description: Entity not exist
+      tags: *a5
+      security: *a6
     delete:
       operationId: ArtistsController_remove
+      summary: Delete artist entity
       parameters:
         - name: id
           required: true
@@ -117,10 +227,37 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a4
+        "404":
+          description: Entity not exist
+      tags: *a5
+      security: *a6
   /track:
+    get:
+      operationId: TracksController_findAll
+      summary: Get all tracks
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Track"
+        "401": &a7
+          description: Unauthorized
+      tags: &a8
+        - Tracks
+      security: &a9
+        - bearer: []
     post:
       operationId: TracksController_create
+      summary: Add single track
       parameters: []
       requestBody:
         required: true
@@ -131,15 +268,20 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: TracksController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+        "401": *a7
+      tags: *a8
+      security: *a9
   "/track/{id}":
     get:
       operationId: TracksController_findOne
+      summary: Get single track
+      description: Get track by ID
       parameters:
         - name: id
           required: true
@@ -149,8 +291,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+        "401": *a7
+        "404":
+          description: Entity not exist
+      tags: *a8
+      security: *a9
     put:
       operationId: TracksController_update
+      summary: Edit single track
       parameters:
         - name: id
           required: true
@@ -166,8 +320,20 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Track"
+        "400":
+          description: Bad request
+        "401": *a7
+        "404":
+          description: Entity not exist
+      tags: *a8
+      security: *a9
     delete:
       operationId: TracksController_remove
+      summary: Delete single track
       parameters:
         - name: id
           required: true
@@ -176,10 +342,35 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "401": *a7
+        "404":
+          description: Entity not exist
+      tags: *a8
+      security: *a9
   /album:
+    get:
+      operationId: AlbumsController_findAll
+      summary: Get all albums
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Album"
+        "401": &a10
+          description: Unauthorized
+      tags: &a11
+        - Albums
+      security: &a12
+        - bearer: []
     post:
       operationId: AlbumsController_create
+      summary: Add single album
       parameters: []
       requestBody:
         required: true
@@ -190,15 +381,20 @@ paths:
       responses:
         "201":
           description: ""
-    get:
-      operationId: AlbumsController_findAll
-      parameters: []
-      responses:
-        "200":
-          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a10
+      tags: *a11
+      security: *a12
   "/album/{id}":
     get:
       operationId: AlbumsController_findOne
+      summary: Get single album
+      description: Get single album by id
       parameters:
         - name: id
           required: true
@@ -208,13 +404,26 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a10
+        "404":
+          description: Entity not found
+      tags: *a11
+      security: *a12
     put:
       operationId: AlbumsController_update
+      summary: Edit single album
       parameters:
         - name: id
           required: true
           in: path
           schema:
+            format: uuid
             type: string
       requestBody:
         required: true
@@ -225,8 +434,21 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "400":
+          description: Bad request
+        "401": *a10
+        "404":
+          description: Entity not found
+      tags: *a11
+      security: *a12
     delete:
       operationId: AlbumsController_remove
+      summary: Delete single album
+      description: Delete album by id
       parameters:
         - name: id
           required: true
@@ -235,50 +457,98 @@ paths:
             type: string
       responses:
         "204":
-          description: ""
-  "/favs/{member}/{id}":
-    post:
-      operationId: FavoritesController_addMemberToFavorite
-      parameters:
-        - name: member
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "201":
-          description: ""
-    delete:
-      operationId: FavoritesController_removeFromFavs
-      parameters:
-        - name: member
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "204":
-          description: ""
+          description: Entity has been deleted successfully
+        "400":
+          description: Bad request
+        "401": *a10
+        "404":
+          description: Entity not found
+      tags: *a11
+      security: *a12
   /favs:
     get:
       operationId: FavoritesController_findAll
+      summary: Get all favorites
       parameters: []
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FavoritesResponse"
+        "401": &a13
+          description: Unauthorized
+      tags: &a14
+        - Favorites
+      security: &a15
+        - bearer: []
+  "/favs/{member}/{id}":
+    post:
+      operationId: FavoritesController_addMemberToFavorite
+      summary: Add to favorites
+      description: Add artist/album/track to favs
+      parameters:
+        - name: member
+          required: true
+          in: path
+          schema:
+            type: string
+            enum:
+              - artist
+              - album
+              - track
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "201":
+          description: Member has been added to favorites
+        "400":
+          description: Bad request
+        "401": *a13
+        "422":
+          description: Entity does't exist
+      tags: *a14
+      security: *a15
+    delete:
+      operationId: FavoritesController_removeFromFavs
+      summary: Remove from favorites
+      description: Remove artist/ album / track from favorites
+      parameters:
+        - name: member
+          required: true
+          in: path
+          schema:
+            type: string
+            enum:
+              - artist
+              - album
+              - track
+        - name: id
+          required: true
+          in: path
+          schema:
+            format: uuid
+            type: string
+      responses:
+        "204":
+          description: Member has been removed from favorites
+        "400":
+          description: Bad request
+        "401": *a13
+        "404":
+          description: Member does't exist
+      tags: *a14
+      security: *a15
   /auth/signup:
     post:
       operationId: AuthController_signup
+      summary: Signup
+      description: User signup
       parameters: []
       requestBody:
         required: true
@@ -289,9 +559,19 @@ paths:
       responses:
         "201":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDto"
+        "400":
+          description: Bad request
+      tags: &a17
+        - Auth
   /auth/login:
     post:
       operationId: AuthController_login
+      summary: Login
+      description: Logins a user and returns a JWT-token
       parameters: []
       requestBody:
         required: true
@@ -301,14 +581,51 @@ paths:
               $ref: "#/components/schemas/CreateUserDto"
       responses:
         "200":
-          description: ""
+          description: Successfull login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accesToken: &a16
+                    type: string
+                    description: JWT token
+                  refreshToken: *a16
+        "400":
+          description: Bad request
+        "403":
+          description: Incorrect login or password
+      tags: *a17
   /auth/refresh:
     post:
       operationId: AuthController_refresh
+      summary: Refresh token
+      description: Get refresh token
       parameters: []
+      requestBody:
+        required: true
+        description: Refresh token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: *a16
       responses:
         "200":
-          description: ""
+          description: New tokens pair
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accesToken: *a16
+                  refreshToken: *a16
+        "401":
+          description: No jwt provided!
+        "403":
+          description: Refresh token is invalid or expired
+      tags: *a17
 info:
   title: Home Library Service
   description: Home music library service
@@ -317,19 +634,181 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
+    UserDto:
+      type: object
+      properties:
+        createdAt:
+          type: number
+          example: 1696967652481
+        updatedAt:
+          type: number
+          example: 1696967652482
+        version:
+          type: number
+          example: 1
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+          example: Mike12
+      required:
+        - createdAt
+        - updatedAt
+        - version
+        - id
+        - login
     CreateUserDto:
       type: object
-      properties: {}
+      properties:
+        login:
+          type: string
+          description: User login
+        password:
+          type: string
+          description: User password
+      required:
+        - login
+        - password
     UpdatePasswordDto:
       type: object
-      properties: {}
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - oldPassword
+        - newPassword
+    Artist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: John Lenon
+        grammy:
+          type: boolean
+      required:
+        - id
+        - name
+        - grammy
     CreateArtistDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - name
+        - grammy
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Oh My Love
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+        albumId:
+          type: string
+          nullable: true
+          format: uuid
+        duration:
+          type: number
+          example: 229
+          description: duration in sec
+      required:
+        - id
+        - name
+        - duration
     CreateTrackDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Oh My Love
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+        albumId:
+          type: string
+          nullable: true
+          format: uuid
+        duration:
+          type: number
+          example: 229
+          description: duration in sec
+      required:
+        - name
+        - duration
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Imagine
+        year:
+          type: number
+          example: 1971
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+      required:
+        - id
+        - name
+        - year
     CreateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+          example: Imagine
+        year:
+          type: number
+          example: 1971
+        artistId:
+          type: string
+          nullable: true
+          format: uuid
+      required:
+        - name
+        - year
+    FavoritesResponse:
+      type: object
+      properties:
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        albums:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        tracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Track"
+      required:
+        - artists
+        - albums
+        - tracks
