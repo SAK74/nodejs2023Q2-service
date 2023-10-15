@@ -4,7 +4,6 @@ import {
   Post,
   Param,
   Delete,
-  ParseUUIDPipe,
   HttpCode,
   NotFoundException,
   UnprocessableEntityException,
@@ -56,7 +55,7 @@ export class FavoritesController {
   async addMemberToFavorite(
     @Param('member', new FavsTypeValidatePipe())
     member: Member,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
   ) {
     if (!(await this.favoritesService.addToFavs(member, id))) {
       throw new UnprocessableEntityException();
@@ -82,7 +81,7 @@ export class FavoritesController {
   async removeFromFavs(
     @Param('member', new FavsTypeValidatePipe())
     member: Member,
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
   ) {
     try {
       await this.favoritesService.removeFromFavs(member, id);

@@ -6,7 +6,7 @@ import {
   Param,
   Delete,
   Put,
-  ParseUUIDPipe,
+  // ParseUUIDPipe,
   HttpCode,
   HttpStatus,
   NotFoundException,
@@ -53,7 +53,7 @@ export class AlbumsController {
     description: 'Get single album by id',
   })
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Album> {
+  async findOne(@Param('id') id: string): Promise<Album> {
     try {
       return await this.albumsService.findOne(id);
     } catch (err) {
@@ -69,7 +69,7 @@ export class AlbumsController {
   @ApiParam({ format: 'uuid', name: 'id' })
   @Put(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() data: CreateAlbumDto,
   ): Promise<Album> {
     try {
@@ -88,7 +88,7 @@ export class AlbumsController {
   @ApiNoContentResponse({ description: 'Entity has been deleted successfully' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id') id: string) {
     try {
       await this.albumsService.remove(id);
     } catch (err) {

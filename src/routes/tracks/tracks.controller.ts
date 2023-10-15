@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  ParseUUIDPipe,
+  // ParseUUIDPipe,
   Put,
   HttpCode,
   HttpStatus,
@@ -49,7 +49,7 @@ export class TracksController {
   @ApiNotFoundResponse({ description: 'Entity not exist' })
   @ApiOperation({ summary: 'Get single track', description: 'Get track by ID' })
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Track> {
+  async findOne(@Param('id') id: string): Promise<Track> {
     try {
       return await this.tracksService.findOne(id);
     } catch (err) {
@@ -64,7 +64,7 @@ export class TracksController {
   @ApiOperation({ summary: 'Edit single track' })
   @Put(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() data: CreateTrackDto,
   ): Promise<Track> {
     try {
@@ -79,7 +79,7 @@ export class TracksController {
   @ApiNoContentResponse({ description: 'Entity has been deleted successfully' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id') id: string) {
     try {
       await this.tracksService.remove(id);
     } catch (err) {

@@ -6,7 +6,7 @@ import {
   Param,
   Delete,
   Put,
-  ParseUUIDPipe,
+  // ParseUUIDPipe,
   HttpException,
   HttpStatus,
   HttpCode,
@@ -49,7 +49,7 @@ export class UsersController {
     description: 'Get user with id',
   })
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id') id: string) {
     try {
       return hidePassw(await this.usersService.findOne(id));
     } catch (err) {
@@ -76,7 +76,7 @@ export class UsersController {
   })
   @Put(':id')
   async passwChange(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() passwUpdate: UpdatePasswordDto,
   ) {
     try {
@@ -97,7 +97,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete user' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id') id: string) {
     try {
       await this.usersService.remove(id);
     } catch (err) {

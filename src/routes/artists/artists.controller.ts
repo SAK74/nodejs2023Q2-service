@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  ParseUUIDPipe,
+  // ParseUUIDPipe,
   Put,
   HttpCode,
   HttpStatus,
@@ -45,7 +45,7 @@ export class ArtistsController {
   @ApiBadRequestResponse({ description: 'Bad request' })
   @ApiNotFoundResponse({ description: 'Entity not exist' })
   @Get(':id')
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Artist> {
+  async findOne(@Param('id') id: string): Promise<Artist> {
     try {
       return await this.artistsService.findOne(id);
     } catch (err) {
@@ -67,7 +67,7 @@ export class ArtistsController {
   @ApiBadRequestResponse({ description: 'Bad request' })
   @Put(':id')
   async update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('id') id: string,
     @Body() data: CreateArtistDto,
   ): Promise<Artist> {
     try {
@@ -83,7 +83,7 @@ export class ArtistsController {
   @ApiNoContentResponse({ description: 'Entity has been deleted successfully' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id') id: string) {
     try {
       await this.artistsService.remove(id);
     } catch (err) {
