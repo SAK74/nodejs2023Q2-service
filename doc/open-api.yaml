@@ -645,10 +645,10 @@ components:
       properties:
         createdAt:
           type: number
-          example: 1696967652481
+          example: 1697400391716
         updatedAt:
           type: number
-          example: 1696967652482
+          example: 1697400391717
         version:
           type: number
           example: 1

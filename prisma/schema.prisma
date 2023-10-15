@@ -7,22 +7,22 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("MONGODB_URL")
 }
 
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
-  login     String   @db.VarChar()
-  password  String   @db.VarChar()
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  login     String   @db.String
+  password  String   @db.String
   version   Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Artist {
-  id        String      @id @default(uuid()) @db.Uuid
-  name      String      @db.VarChar()
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String      @db.String
   grammy    Boolean
   Album     Album[]
   Track     Track[]
@@ -30,42 +30,42 @@ model Artist {
 }
 
 model Album {
-  id        String     @id @default(uuid()) @db.Uuid
-  name      String     @db.VarChar()
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String     @db.String
   year      Int
-  artistId  String?    @db.Uuid
+  artistId  String?    @db.ObjectId
   artist    Artist?    @relation(fields: [artistId], references: [id])
   Track     Track[]
   FavsAlbum FavAlbum[]
 }
 
 model Track {
-  id       String     @id @default(uuid()) @db.Uuid
-  name     String     @db.VarChar()
+  id       String     @id @default(auto()) @map("_id") @db.ObjectId
+  name     String     @db.String
   duration Int
-  artistId String?    @db.Uuid
+  artistId String?    @db.ObjectId
   artist   Artist?    @relation(fields: [artistId], references: [id])
-  albumId  String?    @db.Uuid
+  albumId  String?    @db.ObjectId
   album    Album?     @relation(fields: [albumId], references: [id])
   FavTrack FavTrack[]
 }
 
 model FavArtist {
-  artistId String @unique @db.Uuid
+  artistId String @map("_id") @db.ObjectId
   artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
   @@id([artistId])
 }
 
 model FavAlbum {
-  albumId String @unique @db.Uuid
+  albumId String @map("_id") @db.ObjectId
   album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
   @@id([albumId])
 }
 
 model FavTrack {
-  trackId String @unique @db.Uuid
+  trackId String @map("_id") @db.ObjectId
   track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@id([trackId])
